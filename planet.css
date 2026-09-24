@@ -1,0 +1,19 @@
+.planet-info
+{
+    position: absolute;
+    top: 150px;
+    left: 150px;
+    width: 350px;
+    height: 220px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    border: 1px solid #ddd;
+    /* Standard CSS resize feature */
+    resize: both; 
+    min-width: 250px;
+    min-height: 150px;
+}

@@ -3,12 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="planet.css"/>
     <title>Solar System - Robot Bobby</title>
     <style>
-      body {
-        margin: 0;
+      @font-face {
+        font-family: "earthorbiter";
+        src: url("fonts/earth_orbiter/earthorbiter.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
       }
+
+      body {
+      margin: 0;
+      color: rgb(219, 219, 219);
+      font-family: "Exo 2", sans-serif;
+      font-optical-sizing: auto;
+      }
+
+      h1 {
+        font-family: "earthorbiter", "Exo 2", sans-serif;
+      }
+
     </style>
     <script type="importmap">
       {
@@ -20,14 +38,65 @@
     </script>
   </head>
   <body>
-    <div class="planet-info"> 
-      <div class="planet-header">
-        <h1 class="planet-name"></h1>
-      </div>
-      <div class="planet-description"></div>
-      <div class="planet-stats">  
-        <span class="avg-temp">Average Temperature:</span>
-        <span class="hospitable">Hospitable</span>
+    <div class="planet-info-outer"> 
+      <div class="planet-info-inner hide-scroll-bar"> 
+        <div class="planet-header">
+          <h1 class="planet-name">Keveer</h1>
+        <p class="planet-description">
+          With an ocean encompassing the entire planet living
+          can be complicated for most land dwellers. The cold 
+          areas are unforgiving, and the vents scalding.
+        </p>
+        </div>
+        <div class="planet-properties">
+          <h2>Properties:</h2>
+          <p class="remove-spacing-tb">
+            <b>Biomes: </b><span class="biomes">Oceanic, Ice Shelves, Hydrothermal Trenches</span>
+          </p>  
+          <p class="remove-spacing-tb">
+            <b>Average Temperature: </b><span class="avg-temp">-10 to 40°C (warmer around vents)</span>
+          </p>
+          <p class="remove-spacing-tb">
+            <b>Gravity: </b><span class="gravity">1.02g</span>
+          </p>
+          <p class="remove-spacing-tb">
+            <b>Day Length: </b><span class="day-length">39 hours</span>
+          </p>
+          <p class="remove-spacing-tb">
+            <b>Composition: </b><span class="composition">Aquatic Terran</span>
+          </p>
+          <div class="atmosphere">
+            <p class="remove-spacing-b">
+              <b>Atmosphere: </b><span class="danger-level">safe</span>
+            </p>
+            <ul class="atmosphere-stats remove-spacing-tb">
+              <li>74% Nitrogen</li>
+              <li>18% Oxygen</li>
+              <li>5% Hydrogen</li>
+              <li>3% Ammonia vapor</li>
+              <li>Trace Methane and Salt Crystals (corrosive to electronics)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="humanoid-presences">
+          <h2>Known Humanoid Presences:</h2>
+          <p class="presences-summary">
+            Scattered underwater Frikke villages and Dhozan deep-sea excavation crews
+          ​</p>
+          <div class="cities">
+            <p class="remove-spacing-tb"><b>Cities:</b></p>
+            <ul class="city-list no-bullet remove-spacing-tb">
+              <li>MONOI – The largest undersea city on Keveer,  populated almost entirely by Frikke. Population ~1.2 Million</li>
+              <li>QUELLE – Tourist city located on a large island in the planet-wide ocean. Around 300,000 population mostly inhabited by Frikke, Humans, Dhozan, and Korran</li>
+            </ul>
+          </div>
+        </div>
+        <div class="Moons">
+          <h2>Moons:</h2>
+          <ul class="moon-list no-bullet">
+            <li>JUSANT – Icy moon responsible for Keveer's aggressive tide swells.</li>
+          </ul>
+        </div>
       </div>
     </div>
     <script type="module" src="index.js"></script>

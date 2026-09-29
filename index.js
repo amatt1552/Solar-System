@@ -8,6 +8,7 @@ import { getClickable } from "./src/setClickables.js";
 import getAsteroidBelt from "./src/getAsteroidBelt.js";
 import getElipticLines from "./src/getElipticLines.js";
 import getPlanet from "./src/getPlanet.js"
+import getChild from "./src/getChild.js"
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -46,7 +47,7 @@ function initScene(data) {
   const venus = getPlanet({ size: 0.2, distance: 1.65, img: 'venus.png', name: 'venus' });
   solarSystem.add(venus);
 
-  const moon = getPlanet({ size: 0.075, distance: 0.4, img: 'moon.png' });
+  const moon = getChild({ size: 0.1, distance: 0.5, img: 'moon.png'});
   const earth = getPlanet({ children: [moon], size: 0.225, distance: 2.0, img: 'earth.png', name: 'earth' });
   solarSystem.add(earth);
 
@@ -64,21 +65,21 @@ function initScene(data) {
   const saturnRing = new THREE.Mesh(sRingGeo, sRingMat);
   saturnRing.scale.z = 0.1;
   saturnRing.rotation.x = Math.PI * 0.5;
-  const saturn = getPlanet({ children: [saturnRing], size: 0.35, distance: 3.25, img: 'saturn.png',  name: 'saturn' });
+  const saturn = getPlanet({ ring: saturnRing, size: 0.35, distance: 3.25, img: 'saturn.png',  name: 'saturn' });
   solarSystem.add(saturn);
 
   const uRingGeo = new THREE.TorusGeometry(0.5, 0.05, 8, 64);
   const uRingMat = new THREE.MeshStandardMaterial();
   const uranusRing = new THREE.Mesh(uRingGeo, uRingMat);
   uranusRing.scale.z = 0.1;
-  const uranus = getPlanet({ children: [uranusRing], size: 0.3, distance: 3.75, img: 'uranus.png',  name: 'uranus'});
+  const uranus = getPlanet({ ring: uranusRing, size: 0.3, distance: 3.75, img: 'uranus.png',  name: 'uranus'});
   solarSystem.add(uranus);
 
   const neptune = getPlanet({ size: 0.3, distance: 4.25, img: 'neptune.png', name: 'neptune' });
   solarSystem.add(neptune);
 
   const elipticLines = getElipticLines();
-  solarSystem.add(elipticLines);
+  //solarSystem.add(elipticLines);
 
   const starfield = getStarfield({ numStars: 500, size: 0.35 });
   scene.add(starfield);
@@ -112,23 +113,23 @@ function initScene(data) {
     const time = t * 0.0002;
     requestAnimationFrame(animate);
     solarSystem.userData.update(time);
-    renderer.render(scene, camera);
     // smooth camera Tracking on target planet
     if (targetPlanet){
       setCameraTarget();
     }
-    else
-      {
-        if (useAnimatedCamera) {
-          camera.position.x = Math.cos(time * 0.75) * cameraDistance;
-          camera.position.y = Math.cos(time * 0.75);
-          camera.position.z = Math.sin(time * 0.75) * cameraDistance;
-          camera.lookAt(0, 0, 0);
-        } else {
-          //controls.target.copy(new THREE.Vector3(0,0,0))
-          controls.update();
+    else{
+      
+      if (useAnimatedCamera) {
+        camera.position.x = Math.cos(time * 0.75) * cameraDistance;
+        camera.position.y = Math.cos(time * 0.75);
+        camera.position.z = Math.sin(time * 0.75) * cameraDistance;
+        camera.lookAt(0, 0, 0);
+      } else {
+        //controls.target.copy(new THREE.Vector3(0,0,0));
+        controls.update();
       }
     }
+    renderer.render(scene, camera);
   }
 
   animate();
@@ -157,14 +158,16 @@ function updatePlanetUI(name, description, avgTemp, hospitable){
   document.getElementsByClassName('planet-name')[0].textContent = name;
   document.getElementsByClassName('planet-description')[0].textContent = description;
   document.getElementsByClassName('avg-temp')[0].textContent = avgTemp;
-  document.getElementsByClassName('hospitable')[0].textContent =  hospitable;
+  //document.getElementsByClassName('hospitable')[0].textContent =  hospitable;
 }
 function showPlanetUI(){
-  document.querySelector('.planet-info').style.visibility = 'visible';
+  document.querySelector('.planet-info-outer').style.visibility = 'visible';
+  controls.enabled = false;
 }
 
 function hidePlanetUI(){
-  document.querySelector('.planet-info').style.visibility = 'hidden';
+  document.querySelector('.planet-info-outer').style.visibility = 'hidden';
+  controls.enabled = true;
 }
 
 function handleWindowResize() {
@@ -179,21 +182,35 @@ window.addEventListener('resize', handleWindowResize, false);
 let targetPlanet = null;
 function setCameraTarget(){
   const planetWorldPos = new THREE.Vector3();
-      targetPlanet.getWorldPosition(planetWorldPos);
+    targetPlanet.getWorldPosition(planetWorldPos);
+    const offsetTarget = new THREE.Vector3(
+      planetWorldPos.x + 0.4, 
+      planetWorldPos.y, 
+      planetWorldPos.z
+    );
 
-      // Define where the camera should hover relative to the planet
-      const idealCameraPos = new THREE.Vector3(
-        planetWorldPos.x + 1,
-        planetWorldPos.y + 0.8, 
-        planetWorldPos.z + 1
-      );
+    // Define where the camera should hover relative to the planet
+    const idealCameraPos = new THREE.Vector3(
+      planetWorldPos.x + 0,
+      planetWorldPos.y + 0.0, 
+      planetWorldPos.z + 1
+    );
 
+     // Check the distance between camera and its destination
+    const distance = camera.position.distanceTo(idealCameraPos);
+    
+    if (distance > 0.01) {
       // Smoothly interpolate (lerp) camera and control target towards the planet
       // 0.05 controls the speed (lower = smoother/slower, higher = snappier)
       camera.position.lerp(idealCameraPos, 0.05);
-      controls.target.lerp(planetWorldPos, 0.05);
-      controls.update();
-      //console.log("target acquired")
+      controls.target.lerp(offsetTarget, 0.05);
+    } else {
+       // Lock it directly to the planet's position to stop the drifting lag
+      camera.position.copy(idealCameraPos);
+      controls.target.copy(offsetTarget);
+    }
+    controls.update();
+    //console.log("target acquired")
 
 }
 
@@ -228,14 +245,16 @@ window.addEventListener('click', (event) => {
     // Now that we have the actual registered planet mesh:
     if (clickedObj && clickedObj.userData.name) {
         
-        targetPlanet = clickedObj;
-        updatePlanetUI(
-          clickedObj.userData.name, 
-          clickedObj.userData.description, 
-          clickedObj.userData.temp, 50);
-        showPlanetUI();
+      targetPlanet = clickedObj;
+      updatePlanetUI(
+        clickedObj.userData.name, 
+        clickedObj.userData.description, 
+        clickedObj.userData.temp, 50);
+      showPlanetUI();
+    } else {
+      targetPlanet = null;
+      hidePlanetUI();
     }
-  
   }
   else{
     targetPlanet = null;

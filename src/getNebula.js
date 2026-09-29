@@ -42,7 +42,6 @@ function getNebula({
     const sprite = getSprite({ color, opacity, pos, size });
     layerGroup.add(sprite);
   }
-  layerGroup.raycast = () => {};
   return layerGroup;
 }
 export default getNebula;

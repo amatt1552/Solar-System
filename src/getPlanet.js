@@ -41,7 +41,7 @@ function getPlanet({ children = [], ring = null, distance = 0, childDistance = 2
 
   children.forEach((child) => {
     const actualDistance = child.userData.distance;
-    console.log(actualDistance);
+    //console.log(actualDistance);
     child.position.x = planet.position.x + Math.cos(startAngle) * actualDistance;
     child.position.y = planet.position.y;
     child.position.z = planet.position.z + Math.sin(startAngle) * actualDistance;

@@ -1,0 +1,146 @@
+
+{
+    "galaxy":{
+        "id": "g0",
+        "name": "Milky Way",
+        "type": 0,
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "solar_systems" : [
+            {
+                "id": "g0_s0",
+                "name": "Sol System",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "sun": {
+                    "name": "Sol",
+                    "type": 0,
+                    "size": 1,
+                    "temperature_kelvin": 5778
+                },
+                "planets":[
+                    {
+                        "id": "g0_s0_p0",
+                        "name": "Mercury",
+                        "size": 0.1,
+                        "distance": 1.25,
+                        "model": null,
+                        "texture": "mercury.png",
+                        "ring":null,
+                        "moons": []
+                    },
+                    {
+                        "id": "g0_s0_p1",
+                        "name": "Venus",
+                        "size": 0.2,
+                        "distance": 1.65,
+                        "model": null,
+                        "texture": "venus.png",
+                        "ring":null,
+                        "moons": []
+                    },
+                    {
+                        "id": "g0_s0_p2",
+                        "name": "Earth",
+                        "size": 0.225,
+                        "distance": 2,
+                        "model": null,
+                        "texture": "earth.png",
+                        "ring":null,
+                        "moons": [
+                            {
+                                "id": "g0_s0_p2_m0",
+                                "name": "Moon",
+                                "size": 0.1,
+                                "distance": 0.5,
+                                "model": null,
+                                "texture": "moon.png"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "g0_s0_p3",
+                        "name": "Mars",
+                        "size": 0.15,
+                        "distance": 2.25,
+                        "model": null,
+                        "texture": "mars.png",
+                        "ring": null,
+                        "moons": []
+                    },
+                    {
+                        "id": "g0_s0_p4",
+                        "name": "Jupiter",
+                        "size": 0.4,
+                        "distance": 2.75,
+                        "model": null,
+                        "texture": "jupiter.png",
+                        "ring": null,
+                        "moons": []
+                    },
+                    {
+                        "id": "g0_s0_p5",
+                        "name": "Saturn",
+                        "size": 0.35,
+                        "distance": 3.25,
+                        "model": null,
+                        "texture": "saturn.png",
+                        "ring":{
+                            "type": 2,
+                            "model": null,
+                            "torus_dimensions":{
+                                "radius": 0.6,
+                                "tube": 0.15,
+                                "radial_segments": 8,
+                                "tubular_segments": 64
+                            },
+                            "scale_z": 0.1
+                        },
+                        "moons": []
+                    },
+                    {
+                        "id": "g0_s0_p6",
+                        "name": "Uranus",
+                        "size": 0.3,
+                        "distance": 3.75,
+                        "model": null,
+                        "texture": "uranus.png",
+                        "ring":{
+                            "type": 2,
+                            "model": null,
+                            "torus_dimensions":{
+                                "radius": 0.5,
+                                "tube": 0.05,
+                                "radial_segments": 8,
+                                "tubular_segments": 64
+                            },
+                            "scale_z": 0.1
+                        },
+                        "moons": []
+                    },
+                    {
+                        "id": "g0_s0_p7",
+                        "name": "Neptune",
+                        "size": 0.3,
+                        "distance": 4.25,
+                        "model": null,
+                        "texture": "neptune.png",
+                        "ring": null,
+                        "moons": []
+                    }
+                ],
+                "starfield":{
+                    "num-stars": 500,
+                    "mat-size": 0.35
+                }
+            }
+        ]
+    }
+    
+}

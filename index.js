@@ -28,7 +28,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.03;
 const useAnimatedCamera = false;
-function initScene(data) {
+async function initScene(data) {
   const { objs } = data;
   const solarSystem = new THREE.Group();
   solarSystem.userData.update = (t) => {
@@ -38,45 +38,87 @@ function initScene(data) {
   };
   scene.add(solarSystem);
 
+
   const sun = getSun();
   solarSystem.add(sun);
 
-  const mercury = getPlanet({ size: 0.1, distance: 1.25, img: 'mercury.png', name: 'mercury' });
-  solarSystem.add(mercury);
+  // Creates planets based on data from json
+  const filepath = "./sample-galaxies/sample-galaxy-a.json"
+  const galaxyData = await getJson(filepath);
+  const planetsData = galaxyData.galaxy.solar_systems[0].planets;
+  planetsData.forEach((planetData) => {
+    let moons = [];
+    let ring = null;
+    // Creates the moons first if any found
+    planetData.moons.forEach((moonData) => {      
+      const moon = getChild({ 
+        size: moonData.size, 
+        distance: moonData.distance, 
+        img: moonData.texture, 
+        name: moonData.name});
+      moons.push(moon);
+      
+    });
 
-  const venus = getPlanet({ size: 0.2, distance: 1.65, img: 'venus.png', name: 'venus' });
-  solarSystem.add(venus);
-
-  const moon = getChild({ size: 0.1, distance: 0.5, img: 'moon.png'});
-  const earth = getPlanet({ children: [moon], size: 0.225, distance: 2.0, img: 'earth.png', name: 'earth' });
-  solarSystem.add(earth);
-
-  const mars = getPlanet({ size: 0.15, distance: 2.25, img: 'mars.png', name: 'mars' });
-  solarSystem.add(mars);
+    // Creates rings next if any found
+    console.log(planetData.ring, planetData.name);
+    if(planetData.ring){
+      const dimensions = planetData.ring.torus_dimensions;
+      const ringGeo = new THREE.TorusGeometry(
+        dimensions.radius, 
+        dimensions.tube, 
+        dimensions.radial_segments, 
+        dimensions.tubular_segments);
+      const ringMat = new THREE.MeshStandardMaterial();
+      const newRing = new THREE.Mesh(ringGeo, ringMat);
+      newRing.scale.z =  planetData.ring.scale_z;
+      ring = newRing;
+    }
+    const planet = getPlanet({
+      children: moons, 
+      ring: ring, 
+      size: planetData.size, 
+      distance: planetData.distance, 
+      img: planetData.texture, 
+      name: planetData.name })
+    solarSystem.add(planet)
+  });
+  //const mercury = getPlanet({ size: 0.1, distance: 1.25, img: 'mercury.png', name: 'mercury' });
+  //solarSystem.add(mercury);
+//
+  //const venus = getPlanet({ size: 0.2, distance: 1.65, img: 'venus.png', name: 'venus' });
+  //solarSystem.add(venus);
+//
+  //const moon = getChild({ size: 0.1, distance: 0.5, img: 'moon.png'});
+  //const earth = getPlanet({ children: [moon], size: 0.225, distance: 2.0, img: 'earth.png', name: 'earth' });
+  //solarSystem.add(earth);
+//
+  //const mars = getPlanet({ size: 0.15, distance: 2.25, img: 'mars.png', name: 'mars' });
+  //solarSystem.add(mars);
 
   const asteroidBelt = getAsteroidBelt(objs);
   solarSystem.add(asteroidBelt);
 
-  const jupiter = getPlanet({ size: 0.4, distance: 2.75, img: 'jupiter.png', name: 'jupiter'});
-  solarSystem.add(jupiter);
-
-  const sRingGeo = new THREE.TorusGeometry(0.6, 0.15, 8, 64);
-  const sRingMat = new THREE.MeshStandardMaterial();
-  const saturnRing = new THREE.Mesh(sRingGeo, sRingMat);
-  saturnRing.scale.z = 0.1;
-  saturnRing.rotation.x = Math.PI * 0.5;
-  const saturn = getPlanet({ ring: saturnRing, size: 0.35, distance: 3.25, img: 'saturn.png',  name: 'saturn' });
-  solarSystem.add(saturn);
-
-  const uRingGeo = new THREE.TorusGeometry(0.5, 0.05, 8, 64);
-  const uRingMat = new THREE.MeshStandardMaterial();
-  const uranusRing = new THREE.Mesh(uRingGeo, uRingMat);
-  uranusRing.scale.z = 0.1;
-  const uranus = getPlanet({ ring: uranusRing, size: 0.3, distance: 3.75, img: 'uranus.png',  name: 'uranus'});
-  solarSystem.add(uranus);
-
-  const neptune = getPlanet({ size: 0.3, distance: 4.25, img: 'neptune.png', name: 'neptune' });
-  solarSystem.add(neptune);
+  //const jupiter = getPlanet({ size: 0.4, distance: 2.75, img: 'jupiter.png', name: 'jupiter'});
+  //solarSystem.add(jupiter);
+//
+  //const sRingGeo = new THREE.TorusGeometry(0.6, 0.15, 8, 64);
+  //const sRingMat = new THREE.MeshStandardMaterial();
+  //const saturnRing = new THREE.Mesh(sRingGeo, sRingMat);
+  //saturnRing.scale.z = 0.1;
+  //saturnRing.rotation.x = Math.PI * 0.5;
+  //const saturn = getPlanet({ ring: saturnRing, size: 0.35, distance: 3.25, img: 'saturn.png',  name: 'saturn' });
+  //solarSystem.add(saturn);
+//
+  //const uRingGeo = new THREE.TorusGeometry(0.5, 0.05, 8, 64);
+  //const uRingMat = new THREE.MeshStandardMaterial();
+  //const uranusRing = new THREE.Mesh(uRingGeo, uRingMat);
+  //uranusRing.scale.z = 0.1;
+  //const uranus = getPlanet({ ring: uranusRing, size: 0.3, distance: 3.75, img: 'uranus.png',  name: 'uranus'});
+  //solarSystem.add(uranus);
+//
+  //const neptune = getPlanet({ size: 0.3, distance: 4.25, img: 'neptune.png', name: 'neptune' });
+  //solarSystem.add(neptune);
 
   const elipticLines = getElipticLines();
   //solarSystem.add(elipticLines);
@@ -152,6 +194,18 @@ objs.forEach((name) => {
     });
   });
 });
+
+async function getJson(filepath){
+  try {
+    const response = await fetch(filepath);
+    
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+      return data; // Parses the JSON string into a JS object
+  } catch (error) {
+    console.error("Unable to load JSON file:", error);
+  }
+}
 
 // Should be called to update information on successful click.
 function updatePlanetUI(name, description, avgTemp, hospitable){

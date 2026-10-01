@@ -42,10 +42,10 @@ async function initScene(data) {
   const sun = getSun();
   solarSystem.add(sun);
 
-  // Creates planets based on data from json
   const filepath = "./sample-galaxies/sample-galaxy-a.json"
   const galaxyData = await getJson(filepath);
   const planetsData = galaxyData.galaxy.solar_systems[0].planets;
+  // Creates planets based on data from json
   planetsData.forEach((planetData) => {
     let moons = [];
     let ring = null;
@@ -60,9 +60,10 @@ async function initScene(data) {
       
     });
 
-    // Creates rings next if any found
+    // Creates planet rings next if any found
     console.log(planetData.ring, planetData.name);
     if(planetData.ring){
+      // This creates the most basic ring.
       const dimensions = planetData.ring.torus_dimensions;
       const ringGeo = new THREE.TorusGeometry(
         dimensions.radius, 
@@ -72,8 +73,11 @@ async function initScene(data) {
       const ringMat = new THREE.MeshStandardMaterial();
       const newRing = new THREE.Mesh(ringGeo, ringMat);
       newRing.scale.z =  planetData.ring.scale_z;
+      // Add model here later.
       ring = newRing;
     }
+
+    // Creates the planet
     const planet = getPlanet({
       children: moons, 
       ring: ring, 
@@ -83,42 +87,10 @@ async function initScene(data) {
       name: planetData.name })
     solarSystem.add(planet)
   });
-  //const mercury = getPlanet({ size: 0.1, distance: 1.25, img: 'mercury.png', name: 'mercury' });
-  //solarSystem.add(mercury);
-//
-  //const venus = getPlanet({ size: 0.2, distance: 1.65, img: 'venus.png', name: 'venus' });
-  //solarSystem.add(venus);
-//
-  //const moon = getChild({ size: 0.1, distance: 0.5, img: 'moon.png'});
-  //const earth = getPlanet({ children: [moon], size: 0.225, distance: 2.0, img: 'earth.png', name: 'earth' });
-  //solarSystem.add(earth);
-//
-  //const mars = getPlanet({ size: 0.15, distance: 2.25, img: 'mars.png', name: 'mars' });
-  //solarSystem.add(mars);
+  
 
   const asteroidBelt = getAsteroidBelt(objs);
   solarSystem.add(asteroidBelt);
-
-  //const jupiter = getPlanet({ size: 0.4, distance: 2.75, img: 'jupiter.png', name: 'jupiter'});
-  //solarSystem.add(jupiter);
-//
-  //const sRingGeo = new THREE.TorusGeometry(0.6, 0.15, 8, 64);
-  //const sRingMat = new THREE.MeshStandardMaterial();
-  //const saturnRing = new THREE.Mesh(sRingGeo, sRingMat);
-  //saturnRing.scale.z = 0.1;
-  //saturnRing.rotation.x = Math.PI * 0.5;
-  //const saturn = getPlanet({ ring: saturnRing, size: 0.35, distance: 3.25, img: 'saturn.png',  name: 'saturn' });
-  //solarSystem.add(saturn);
-//
-  //const uRingGeo = new THREE.TorusGeometry(0.5, 0.05, 8, 64);
-  //const uRingMat = new THREE.MeshStandardMaterial();
-  //const uranusRing = new THREE.Mesh(uRingGeo, uRingMat);
-  //uranusRing.scale.z = 0.1;
-  //const uranus = getPlanet({ ring: uranusRing, size: 0.3, distance: 3.75, img: 'uranus.png',  name: 'uranus'});
-  //solarSystem.add(uranus);
-//
-  //const neptune = getPlanet({ size: 0.3, distance: 4.25, img: 'neptune.png', name: 'neptune' });
-  //solarSystem.add(neptune);
 
   const elipticLines = getElipticLines();
   //solarSystem.add(elipticLines);
@@ -211,7 +183,7 @@ async function getJson(filepath){
 function updatePlanetUI(name, description, avgTemp, hospitable){
   document.getElementsByClassName('planet-name')[0].textContent = name;
   document.getElementsByClassName('planet-description')[0].textContent = description;
-  document.getElementsByClassName('avg-temp')[0].textContent = avgTemp;
+  //document.getElementsByClassName('avg-temp')[0].textContent = avgTemp;
   //document.getElementsByClassName('hospitable')[0].textContent =  hospitable;
 }
 function showPlanetUI(){
@@ -297,13 +269,15 @@ window.addEventListener('click', (event) => {
     }
 
     // Now that we have the actual registered planet mesh:
-    if (clickedObj && clickedObj.userData.name) {
-        
+    const planetInfo = clickedObj.userData.planetInfo;
+    if (clickedObj && planetInfo) {
+      
       targetPlanet = clickedObj;
       updatePlanetUI(
-        clickedObj.userData.name, 
-        clickedObj.userData.description, 
-        clickedObj.userData.temp, 50);
+        planetInfo.name, 
+        planetInfo.description, 
+        5, 
+        50);
       showPlanetUI();
     } else {
       targetPlanet = null;

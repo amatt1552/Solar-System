@@ -1,0 +1,119 @@
+
+.input-container-full-width{
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    padding-top: 1rem;
+}
+.flex-input{
+    flex: 1;
+}
+
+.description-height{
+    min-height: 4rem;
+}
+
+.data-edit-cities-list{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.deleted-list-container{
+    max-height: 4rem;
+    overflow: auto;
+    margin-bottom: 16px;
+    margin-top: 8px;
+}
+/* Dark background overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
+    z-index: 1000;
+}
+
+/* Center the popup box */
+.popup-outer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #5d5d5dab;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 400px;
+}
+.popup-inner{
+    position: relative;
+    background-color: #ffffff00;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid gray;
+    padding: 20px;
+    margin: 4px;
+}
+
+.info-outer{
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 40vw;
+    height: 98vh;
+    background-color: #5d5d5dab;
+}
+.info-inner{
+    box-sizing: border-box; /* Make it account for padding with % */
+    margin: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: calc(100% - 8px); /* Adjust based on your total margins */
+    background-color: #ffffff00;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    border: 2px solid gray;
+}
+
+.center-text{
+    text-align: center;
+}
+.danger-level
+{
+    color: green;
+}
+/*removes bullet and indent from list*/
+.no-bullet-pad{
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+/*removes bullet from list*/
+.no-bullet{
+    list-style-type: none;
+}
+/*removes the bottom spacing on an element*/
+.remove-spacing-b{
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+/*removes the top spacing on an element*/
+.remove-spacing-t{
+    padding-top: 0;
+    margin-top: 0;
+}
+/*removes the top and bottom spacing on an element*/
+.remove-spacing-tb{
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+/*removes the whitebackground from scrollbar*/
+.hide-scroll-background {
+    /* format: scrollbar-color: thumb-color track-color; */
+    scrollbar-color: #888888 transparent; 
+}

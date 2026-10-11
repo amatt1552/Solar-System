@@ -22,7 +22,7 @@
                     "name": "Sol",
                     "type": 0,
                     "size": 1,
-                    "temperature_kelvin": 5778
+                    "temperature": 5778
                 },
                 "planets":[
                     {

@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { getFresnelMat } from './getFresnelMat.js';
 import { setClickable } from './setClickables.js';
-import { getPlanetInfo } from './getPlanetInfo.js'
 
 const texLoader = new THREE.TextureLoader();
 let geo = null;
-function getPlanet({ 
+function getPlanet({
+  solarSystem,
+  stats,
   children = [], 
   ring = null, 
   rotationSpeed = 1, 
@@ -15,10 +16,8 @@ function getPlanet({
   useModel = false,
   model = null,
   img = '', 
-  size = 1, 
-  name = "Unknown", 
-  description = "This planet is very mysterious. No one knows what is in store."
-} = {}) {
+  size = 1
+}){
   if(useModel && model){
       geo = model;
   } else {
@@ -37,12 +36,8 @@ function getPlanet({
   const planet = new THREE.Mesh(geo, planetMat);
   planet.scale.setScalar(size);
 
-  // Setting the info for the planet's UI
-  console.log(name);
-  const planetInfo = getPlanetInfo({name: name, description: description});
-  console.log (planetInfo.name);
   // Saves into userData. since is parent wont need anything else.
-  planet.userData = {planetInfo: planetInfo};
+  planet.userData = {stats: stats};
   const startAngle = Math.random() * Math.PI * 2;
 
  

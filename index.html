@@ -4,9 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"> 
-    <link rel="stylesheet" href="planet.css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"> 
+    <!-- Style sheet for planets -->
+    <link rel="stylesheet" href="styles/planet.css"/>
+    <!-- Style sheet for sidebar -->
+    <link rel="stylesheet" href="styles/sidebar.css"/>
+    <!-- Style sheet for hamburger button -->
+    <link rel="stylesheet" href="styles/hamburger.css"/>
     <title>Solar System - Robot Bobby</title>
     <style>
       @font-face {
@@ -16,17 +21,66 @@
         font-style: normal;
       }
 
-      body {
-      margin: 0;
-      color: rgb(219, 219, 219);
-      font-family: "Exo 2", sans-serif;
-      font-optical-sizing: auto;
-      }
-
       h1 {
         font-family: "earthorbiter", "Exo 2", sans-serif;
       }
+      body {
+        margin: 0;
+        color: rgb(219, 219, 219);
+        font-family: "Exo 2", sans-serif;
+        font-optical-sizing: auto;
+        background-color: black;
+      }
 
+      button{
+        
+        font-family: "Exo 2", sans-serif;
+        border: none;
+        font-optical-sizing: auto;
+        background-color:rgba(99, 99, 99, 0.473);
+        color: white;
+      }
+      button:hover
+      {
+        background-color:rgba(128, 128, 128, 0.473);
+        color: white;
+        cursor: pointer;
+      }
+      button:disabled
+      {
+        background-color:rgba(56, 56, 56, 0.473);
+        color: rgb(160, 160, 160);
+      }
+
+      input{
+        font-family: "Exo 2", sans-serif;
+        border-style: solid;
+        font-optical-sizing: auto;
+        background-color:rgba(99, 99, 99, 0.473);
+        color: white;
+      }
+
+      textarea{
+        font-family: "Exo 2", sans-serif;
+        border-style: solid;
+        font-optical-sizing: auto;
+        background-color:rgba(99, 99, 99, 0.473);
+        color: white;
+        min-height: 2rem;
+        resize: none;
+      }
+
+      select{
+        font-family: "Exo 2", sans-serif;
+        border-style: solid;
+        font-optical-sizing: auto;
+        background-color:rgba(99, 99, 99, 0.473);
+        color: white;
+      }
+
+      select option{
+        background-color:rgba(61, 61, 61, 0.473);
+      }
     </style>
     <script type="importmap">
       {
@@ -38,16 +92,119 @@
     </script>
   </head>
   <body>
-    <div class="planet-info-outer"> 
-      <div class="planet-info-inner hide-scroll-bar"> 
-        <div class="planet-header">
-          <h1 class="planet-name">Keveer</h1>
-        <p class="planet-description">
-          With an ocean encompassing the entire planet living
-          can be complicated for most land dwellers. The cold 
-          areas are unforgiving, and the vents scalding.
-        </p>
+    <!-- Sidebar menu containing buttons for managing galaxies -->
+    <div id="sidebar-container" class="galaxy-menu-outer">
+      <div class="galaxy-menu-inner">
+        <h1 class="galaxy-menu-header center-text">
+          Galaxies
+        </h1>
+        <div id="sidebar-selection-group">
+          <button class="galaxy-selection">
+            Galaxy Name
+          </button>
+          <button class="galaxy-selection">
+            Galaxy Name 2
+          </button>
         </div>
+        <div class="action-bar-outer">
+          <div class="simple-add-menu">
+            <h2 class="simple-add-header center-text">
+              Create Galaxy
+            </h2>
+            <div class="input-container-full-width remove-spacing-t">
+              <span>Name:</span><input class="flex-input"></input>
+            </div>
+          </div>
+          <div class="action-bar-button-group">
+            <button class="back action-bar-button">
+              Back
+            </button>
+            <button class="add action-bar-button">
+              Add
+            </button>
+            <button class="back action-bar-button">
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <div class="hamburger-box">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </div>
+
+    <!--Menu for editing planets-->
+    <div class="info-outer planet-edit-outer">
+      <div class="info-inner hide-scroll-background"> 
+        
+        <h1 class="data-edit-header center-text">
+          Planet Data
+        </h1>
+        <div class="input-container-full-width remove-spacing-t">
+          <span>Name:</span><input class="flex-input data-edit-name"></input>
+        </div>
+        <p>Description:</p>
+        <textarea class="data-edit-description description-height"></textarea>
+
+        <h2>Properties:</h2>
+        <div class="input-container-full-width remove-spacing-t">
+          <span>Biomes:</span><input class="flex-input data-edit-biomes"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Average Temperature:</span><input class="flex-input data-edit-temperature"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Gravity:</span><input class="flex-input data-edit-gravity"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Day Length:</span><input class="flex-input data-edit-day-length"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Composition:</span><input class="flex-input data-edit-composition"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Atmosphere:</span>
+          <select class="flex-input data-edit-composition">
+            <option> Safe </option>
+            <option> Moderate </option>
+            <option> Deadly </option>
+          </select>
+        </div>
+        <p>Atmosphere Stats:</p>
+        <div class="input-container-full-width remove-spacing-t atmosphere-stat-list">
+          <input class="flex-input data-edit-atmosphere"></input>
+        </div>
+        <button class="add-atmosphere-stat">+</button>
+
+        <h2>Humanoid Presences:</h2>
+        <p class="remove-spacing-t">Summary:</p>
+        <textarea class="data-edit-humanoid-summary description-height"></textarea>
+        <p>Cities:</p>
+        <div class="data-edit-cities-list">
+          <textarea class="data-edit-city"></textarea>
+        </div>
+        <button class="add-city">+</button>
+        <br>
+      </div>
+    </div>
+
+
+    <!--Menu dispaying planet data-->
+    <div class="info-outer planet-info-outer"> 
+      <div class="info-inner hide-scroll-background"> 
+        <div class="planet-header">
+          <h1 class="planet-name center-text">Keveer</h1>
+          <p class="planet-description">
+            With an ocean encompassing the entire planet living
+            can be complicated for most land dwellers. The cold 
+            areas are unforgiving, and the vents scalding.
+          </p>
+        </div>
+        
         <div class="planet-properties">
           <h2>Properties:</h2>
           <p class="remove-spacing-tb">
@@ -78,6 +235,7 @@
             </ul>
           </div>
         </div>
+        
         <div class="humanoid-presences">
           <h2>Known Humanoid Presences:</h2>
           <p class="presences-summary">
@@ -85,20 +243,51 @@
           ​</p>
           <div class="cities">
             <p class="remove-spacing-tb"><b>Cities:</b></p>
-            <ul class="city-list no-bullet remove-spacing-tb">
+            <ul class="city-list no-bullet-pad remove-spacing-tb">
               <li>MONOI – The largest undersea city on Keveer,  populated almost entirely by Frikke. Population ~1.2 Million</li>
               <li>QUELLE – Tourist city located on a large island in the planet-wide ocean. Around 300,000 population mostly inhabited by Frikke, Humans, Dhozan, and Korran</li>
             </ul>
           </div>
         </div>
+
         <div class="Moons">
           <h2>Moons:</h2>
-          <ul class="moon-list no-bullet">
+          <ul class="moon-list no-bullet-pad">
             <li>JUSANT – Icy moon responsible for Keveer's aggressive tide swells.</li>
           </ul>
         </div>
       </div>
     </div>
+
+    <!--Menu for remove confirmation popup-->
+    <div class="overlay">
+      <div class="popup-outer">
+        <div class="popup-inner">
+          <h2 class="center-text remove-spacing-tb">
+            Are you sure?
+          </h2>
+          <p class="remove-spacing-b">
+            Deleted Planetoids:
+          </p>
+          <div class="deleted-list-container hide-scroll-background">
+            <ul class="deleted-list">
+              <li>Dont hurt me</li>
+              <li>Please</li>
+              <li>Im Innocent!</li>
+              <li>Im Innocent!</li>
+              <li>Im Innocent!</li>
+              <li>Im Innocent!</li>
+              <li>Im Innocent!</li>
+              <li>Im Innocent!</li>
+            </ul>
+          </div>
+          <button class="remove-confirm">
+            Confirm   
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="index.js"></script>
   </body>
 </html>

@@ -1,0 +1,52 @@
+/* Base button layout reset */
+.hamburger {
+  position: absolute;
+  top: 0px;
+  left:100%;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  cursor: pointer;
+  border: 0;
+  margin: 0;
+  z-index: 999;
+}
+
+/* Container for the inner elements */
+.hamburger-box {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  align-content: space-between;
+  justify-items: center;
+}
+/* 3. Global properties for the 3 visual bars */
+.hamburger-box span {
+  display: block;
+  width: 100%;                 /* Visible layout width */
+  height: 3px;                 /* Bar thickness */
+  background-color: rgb(219, 219, 219);
+  border-radius: 4px;
+  
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: left center; /* Optimizes smooth transition rotations */
+}
+
+/* --- ANIMATION TO "X" WHEN ACTIVE --- */
+.hamburger.is-active span:nth-child(2) {
+  opacity: 0;
+}
+/* Hide middle bar */
+.hamburger.is-active span:nth-child(2) {
+  opacity: 0;
+}
+
+/* Rotate top bar into a forward slash */
+.hamburger.is-active span:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
+}
+
+/* Rotate bottom bar into a backslash */
+.hamburger.is-active span:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
+}

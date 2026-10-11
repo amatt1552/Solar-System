@@ -1,0 +1,54 @@
+.galaxy-menu-outer{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 20vw;
+    height: 98vh;
+    background-color: #5d5d5dab;
+}
+.galaxy-menu-inner{
+    position: relative;
+    box-sizing: border-box; /* Make it account for padding with % */
+    margin: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: calc(100% - 8px); /* Adjust based on the sum of top and bottom margins */
+    background-color: #ffffff00;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    border: 2px solid gray;
+}
+.galaxy-selection{
+    width: 100%;
+    height: 2rem;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.action-bar-outer{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+}
+.action-bar-button-group{
+    height: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+.action-bar-button-group button:last-child {
+  border-right: none;
+}
+.action-bar-button{
+    flex: 1;
+    border: 1px solid rgba(128, 128, 128, 0.473);
+    border-left: none;
+    border-bottom: none;
+}
+.simple-add-menu{
+    background-color: rgba(99, 99, 99, 0.473);
+    padding: 1px 8px 32px 8px;
+    border-top: 1px solid rgba(128, 128, 128, 0.473);
+}

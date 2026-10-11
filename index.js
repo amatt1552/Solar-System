@@ -9,6 +9,9 @@ import getAsteroidBelt from "./src/getAsteroidBelt.js";
 import getElipticLines from "./src/getElipticLines.js";
 import getPlanet from "./src/getPlanet.js"
 import getChild from "./src/getChild.js"
+import {createJson, Galaxy, SolarSystem, Planet, Sun, Moon, Stats} from "./src/dataManagement.js"
+import {addSelection, setSelections} from "./src/sidebar.js"
+import { panWindow, Direction } from "./src/transitions.js";
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -21,112 +24,25 @@ renderer.setSize(w, h);
 // renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
-// const wireMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
-// scene.overrideMaterial = wireMat;
+//const wireMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
+//scene.overrideMaterial = wireMat;
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.03;
 const useAnimatedCamera = false;
+const solarSystemGroup = new THREE.Group();
+
 async function initScene(data) {
   const { objs } = data;
-  const solarSystem = new THREE.Group();
-  solarSystem.userData.update = (t) => {
-    solarSystem.children.forEach((child) => {
-      child.userData.update?.(t);
-    });
-  };
-  scene.add(solarSystem);
-
-
-  const sun = getSun();
-  solarSystem.add(sun);
-
-  const filepath = "./sample-galaxies/sample-galaxy-a.json"
-  const galaxyData = await getJson(filepath);
-  const planetsData = galaxyData.galaxy.solar_systems[0].planets;
-  // Creates planets based on data from json
-  planetsData.forEach((planetData) => {
-    let moons = [];
-    let ring = null;
-    // Creates the moons first if any found
-    planetData.moons.forEach((moonData) => {      
-      const moon = getChild({ 
-        size: moonData.size, 
-        distance: moonData.distance, 
-        img: moonData.texture, 
-        name: moonData.name});
-      moons.push(moon);
-      
-    });
-
-    // Creates planet rings next if any found
-    console.log(planetData.ring, planetData.name);
-    if(planetData.ring){
-      // This creates the most basic ring.
-      const dimensions = planetData.ring.torus_dimensions;
-      const ringGeo = new THREE.TorusGeometry(
-        dimensions.radius, 
-        dimensions.tube, 
-        dimensions.radial_segments, 
-        dimensions.tubular_segments);
-      const ringMat = new THREE.MeshStandardMaterial();
-      const newRing = new THREE.Mesh(ringGeo, ringMat);
-      newRing.scale.z =  planetData.ring.scale_z;
-      // Add model here later.
-      ring = newRing;
-    }
-
-    // Creates the planet
-    const planet = getPlanet({
-      children: moons, 
-      ring: ring, 
-      size: planetData.size, 
-      distance: planetData.distance, 
-      img: planetData.texture, 
-      name: planetData.name })
-    solarSystem.add(planet)
-  });
-  
-
-  const asteroidBelt = getAsteroidBelt(objs);
-  solarSystem.add(asteroidBelt);
-
-  const elipticLines = getElipticLines();
-  //solarSystem.add(elipticLines);
-
-  const starfield = getStarfield({ numStars: 500, size: 0.35 });
-  scene.add(starfield);
-
-  const dirLight = new THREE.DirectionalLight(0x0099ff, 1);
-  dirLight.position.set(0, 1, 0);
-  scene.add(dirLight);
-
-  const nebula = getNebula({
-    hue: 0.6,
-    numSprites: 10,
-    opacity: 0.2,
-    radius: 40,
-    size: 80,
-    z: -50.5,
-  });
-  scene.add(nebula);
-
-  const anotherNebula = getNebula({
-    hue: 0.0,
-    numSprites: 10,
-    opacity: 0.2,
-    radius: 40,
-    size: 80,
-    z: 50.5,
-  });
-  scene.add(anotherNebula);
+  initUI();
+  createGalaxy();
 
   const cameraDistance = 5;
   function animate(t = 0) {
     const time = t * 0.0002;
     requestAnimationFrame(animate);
-    solarSystem.userData.update(time);
+    solarSystemGroup.userData.update(time);
     // smooth camera Tracking on target planet
     if (targetPlanet){
       setCameraTarget();
@@ -166,6 +82,123 @@ objs.forEach((name) => {
     });
   });
 });
+
+function initUI(){
+  const sidebar = document.getElementById("sidebar-container");
+  //panWindow(sidebar, 1, Direction.LEFT);
+}
+
+async function createGalaxy(){
+  //galaxy has to be created in this order: galaxy, solarsystem, planets, planet's children.
+  const galaxies = [new Galaxy("Milky Way", 0, {x:0,y:0,z:0}, null)];
+  
+  const solarSystems = [new SolarSystem(galaxies[0], "Sol System", {x:0,y:0,z:0}, null, null)];
+  galaxies[0].solarSystems = solarSystems;
+
+  const sunData = new Sun(solarSystems[0], "Sol", 1, 5778);
+  const planets = [new Planet(solarSystems[0], 0.225, 2, null, "earth.png", null, null)];
+  solarSystems[0].sun = sunData;
+  solarSystems[0].planets = planets;
+  
+  const moons = [new Moon(planets[0], "Moon", 0.1, 0.5, null, "moon.png")];
+  planets[0].moons = moons;
+  
+  setSelections(galaxies);
+  const newJson = createJson(galaxies);
+  
+
+  //adds update to userData.
+  solarSystemGroup.userData.update = (t) => {
+    solarSystemGroup.children.forEach((child) => {
+      child.userData.update?.(t);
+    });
+  };
+  scene.add(solarSystemGroup);
+
+  const sun = getSun();
+  solarSystemGroup.add(sun);
+
+  //const filepath = "./sample-galaxies/sample-galaxy-a.json"
+  //const galaxyData = await getJson(filepath);
+  const galaxyData = JSON.parse(newJson);
+  const planetsData = galaxyData[0].solar_systems[0].planets;
+  // Creates planets based on data from json
+  planetsData.forEach((planetData) => {
+  let moons = [];
+  let ring = null;
+  // Creates the moons first if any found
+  planetData.moons.forEach((moonData) => {      
+    const moon = getChild({ 
+      size: moonData.size, 
+      distance: moonData.distance, 
+      img: moonData.texture, 
+      name: moonData.name});
+    moons.push(moon);
+    
+  });
+
+  // Creates planet rings next if any found
+  //console.log(planetData.ring, planetData.name);
+  if(planetData.ring){
+    // This creates the most basic ring.
+    const dimensions = planetData.ring.torus_dimensions;
+    const ringGeo = new THREE.TorusGeometry(
+      dimensions.radius, 
+      dimensions.tube, 
+      dimensions.radial_segments, 
+      dimensions.tubular_segments);
+    const ringMat = new THREE.MeshStandardMaterial();
+    const newRing = new THREE.Mesh(ringGeo, ringMat);
+    newRing.scale.z =  planetData.ring.scale_z;
+    // Add model here later.
+    ring = newRing;
+  }
+
+  // Creates the planet
+  const planet = getPlanet({
+    children: moons, 
+    ring: ring, 
+    size: planetData.size, 
+    distance: planetData.distance, 
+    img: planetData.texture, 
+    name: planetData.name })
+  solarSystemGroup.add(planet)
+  });
+  
+
+  const asteroidBelt = getAsteroidBelt(objs);
+  solarSystemGroup.add(asteroidBelt);
+
+  const elipticLines = getElipticLines();
+  //solarSystemGroup.add(elipticLines);
+
+  const starfield = getStarfield({ numStars: 500, size: 0.35 });
+  scene.add(starfield);
+
+  const dirLight = new THREE.DirectionalLight(0x0099ff, 1);
+  dirLight.position.set(0, 1, 0);
+  scene.add(dirLight);
+
+  const nebula = getNebula({
+    hue: 0.6,
+    numSprites: 10,
+    opacity: 0.2,
+    radius: 40,
+    size: 80,
+    z: -50.5,
+  });
+  scene.add(nebula);
+
+  const anotherNebula = getNebula({
+    hue: 0.0,
+    numSprites: 10,
+    opacity: 0.2,
+    radius: 40,
+    size: 80,
+    z: 50.5,
+  });
+  scene.add(anotherNebula);
+}
 
 async function getJson(filepath){
   try {

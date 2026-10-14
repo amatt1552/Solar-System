@@ -94,8 +94,8 @@
   <body>
     <!-- Sidebar menu containing buttons for managing galaxies -->
     <div id="sidebar-container" class="galaxy-menu-outer">
-      <div class="galaxy-menu-inner">
-        <h1 class="galaxy-menu-header center-text">
+      <div class="galaxy-menu-inner hide-scroll-background">
+        <h1 id="sidebar-header" class="center-text">
           Galaxies
         </h1>
         <div id="sidebar-selection-group">
@@ -116,19 +116,19 @@
             </div>
           </div>
           <div class="action-bar-button-group">
-            <button class="back action-bar-button">
+            <button id="back" class="action-bar-button">
               Back
             </button>
-            <button class="add action-bar-button">
+            <button id="add" class="action-bar-button">
               Add
             </button>
-            <button class="back action-bar-button">
+            <button id="remove" class="action-bar-button">
               Remove
             </button>
           </div>
         </div>
       </div>
-      <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <button id="sidebar-hamburger" class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
         <div class="hamburger-box">
           <span></span>
           <span></span>
@@ -137,8 +137,8 @@
       </button>
     </div>
 
-    <!--Menu for editing planets-->
-    <div class="info-outer planet-edit-outer">
+    <!--Menu for editing planet data-->
+    <div class="info-outer" id="data-entry-outer">
       <div class="info-inner hide-scroll-background"> 
         
         <h1 class="data-edit-header center-text">
@@ -194,7 +194,7 @@
 
 
     <!--Menu dispaying planet data-->
-    <div class="info-outer planet-info-outer"> 
+    <div class="info-outer" id="data-display-outer"> 
       <div class="info-inner hide-scroll-background"> 
         <div class="planet-header">
           <h1 class="planet-name center-text">Keveer</h1>

@@ -29,6 +29,7 @@ function getChild({
   });
   const child = new THREE.Mesh(geo, childMat);
   child.scale.setScalar(size);
+  child.name = stats.name;
 
   // Adds variables the parent will need.
   child.userData = {stats: stats, distance: distance, orbitSpeed: orbitSpeed};

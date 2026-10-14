@@ -9,9 +9,11 @@ import getAsteroidBelt from "./src/getAsteroidBelt.js";
 import getElipticLines from "./src/getElipticLines.js";
 import getPlanet from "./src/getPlanet.js"
 import getChild from "./src/getChild.js"
-import {createJson, Galaxy, SolarSystem, Planet, Sun, Moon, Stats} from "./src/dataManagement.js"
-import {addSelection, setSelections} from "./src/sidebar.js"
-import { panWindow, Direction } from "./src/transitions.js";
+import * as data from "./src/dataManagement.js"
+
+import {initSideBar, addSelection, setSelections} from "./src/sidebar.js"
+import initDataEntry from "./src/dataEntryWindow.js";
+import { initDataDisplay, showData, hideData } from "./src/dataDisplayWindow.js";
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -35,7 +37,12 @@ const solarSystemGroup = new THREE.Group();
 
 async function initScene(data) {
   const { objs } = data;
-  initUI();
+  //initialize UI
+  initDataEntry();
+  initSideBar();
+  initDataDisplay();
+
+  //initialize galaxy
   createGalaxy();
 
   const cameraDistance = 5;
@@ -83,28 +90,25 @@ objs.forEach((name) => {
   });
 });
 
-function initUI(){
-  const sidebar = document.getElementById("sidebar-container");
-  //panWindow(sidebar, 1, Direction.LEFT);
-}
 
 async function createGalaxy(){
   //galaxy has to be created in this order: galaxy, solarsystem, planets, planet's children.
-  const galaxies = [new Galaxy("Milky Way", 0, {x:0,y:0,z:0}, null)];
+  const galaxies = [new data.Galaxy("Milky Way", 0, {x:0,y:0,z:0}, null)];
   
-  const solarSystems = [new SolarSystem(galaxies[0], "Sol System", {x:0,y:0,z:0}, null, null)];
+  const solarSystems = [new data.SolarSystem(galaxies[0], "Sol System", {x:0,y:0,z:0}, null, null)];
   galaxies[0].solarSystems = solarSystems;
 
-  const sunData = new Sun(solarSystems[0], "Sol", 1, 5778);
-  const planets = [new Planet(solarSystems[0], 0.225, 2, null, "earth.png", null, null)];
+  const sunData = new data.Sun(solarSystems[0], "Sol", 1, 5778);
+  const planets = [new data.Planet(solarSystems[0],"Earth", 0.225, 2, null, "earth.png", null, null)];
   solarSystems[0].sun = sunData;
   solarSystems[0].planets = planets;
   
-  const moons = [new Moon(planets[0], "Moon", 0.1, 0.5, null, "moon.png")];
+  const moons = [new data.Moon(planets[0], "Moon", 0.1, 0.5, null, "moon.png")];
   planets[0].moons = moons;
   
-  setSelections(galaxies);
-  const newJson = createJson(galaxies);
+  populateGalaxies
+();
+  const newJson = data.createJson(galaxies);
   
 
   //adds update to userData.
@@ -120,49 +124,52 @@ async function createGalaxy(){
 
   //const filepath = "./sample-galaxies/sample-galaxy-a.json"
   //const galaxyData = await getJson(filepath);
+  //const planetsData = galaxyData.galaxy.solar_systems[0].planets;
   const galaxyData = JSON.parse(newJson);
   const planetsData = galaxyData[0].solar_systems[0].planets;
   // Creates planets based on data from json
   planetsData.forEach((planetData) => {
-  let moons = [];
-  let ring = null;
-  // Creates the moons first if any found
-  planetData.moons.forEach((moonData) => {      
-    const moon = getChild({ 
-      size: moonData.size, 
-      distance: moonData.distance, 
-      img: moonData.texture, 
-      name: moonData.name});
-    moons.push(moon);
-    
-  });
+    let moons = [];
+    let ring = null;
+    // Creates the moons first if any found
+    planetData.moons.forEach((moonData) => {      
+      const moon = getChild({ 
+        stats: new data.Stats(),
+        size: moonData.size, 
+        distance: moonData.distance, 
+        img: moonData.texture, 
+        name: moonData.name});
+      moons.push(moon);
+      
+    });
 
-  // Creates planet rings next if any found
-  //console.log(planetData.ring, planetData.name);
-  if(planetData.ring){
-    // This creates the most basic ring.
-    const dimensions = planetData.ring.torus_dimensions;
-    const ringGeo = new THREE.TorusGeometry(
-      dimensions.radius, 
-      dimensions.tube, 
-      dimensions.radial_segments, 
-      dimensions.tubular_segments);
-    const ringMat = new THREE.MeshStandardMaterial();
-    const newRing = new THREE.Mesh(ringGeo, ringMat);
-    newRing.scale.z =  planetData.ring.scale_z;
-    // Add model here later.
-    ring = newRing;
-  }
+    // Creates planet rings next if any found
+    //console.log(planetData.ring, planetData.name);
+    if(planetData.ring){
+      // This creates the most basic ring.
+      const dimensions = planetData.ring.torus_dimensions;
+      const ringGeo = new THREE.TorusGeometry(
+        dimensions.radius, 
+        dimensions.tube, 
+        dimensions.radial_segments, 
+        dimensions.tubular_segments);
+      const ringMat = new THREE.MeshStandardMaterial();
+      const newRing = new THREE.Mesh(ringGeo, ringMat);
+      newRing.scale.z =  planetData.ring.scale_z;
+      // Add model here later.
+      ring = newRing;
+    }
 
-  // Creates the planet
-  const planet = getPlanet({
-    children: moons, 
-    ring: ring, 
-    size: planetData.size, 
-    distance: planetData.distance, 
-    img: planetData.texture, 
-    name: planetData.name })
-  solarSystemGroup.add(planet)
+    // Creates the planet
+    const planet = getPlanet({
+      stats: new data.Stats(),
+      children: moons, 
+      ring: ring, 
+      size: planetData.size, 
+      distance: planetData.distance, 
+      img: planetData.texture, 
+      name: planetData.name })
+    solarSystemGroup.add(planet)
   });
   
 
@@ -212,6 +219,86 @@ async function getJson(filepath){
   }
 }
 
+
+// Setting selections to sidebar and back button functionality
+const sidebarBack = document.getElementById("back");
+const sidebarHeader = document.getElementById("sidebar-header");
+/**
+ * Sets values for sidebar selections to galaxies
+*/
+function populateGalaxies(){
+  // Sets header for sidebar
+  sidebarHeader.innerText = "Galaxies"
+  // Get map from dataManagement
+  const galaxies = data.galaxiesMap;
+  const galaxyButtons = setSelections(galaxies);
+  // Creates double click event for each planet button added
+  galaxyButtons.forEach((button) =>{
+    button.addEventListener("dblclick", () => populateSolarSystems(button.id));
+  });
+  // Setting back button behavior
+  sidebarBack.disabled = true;
+}
+/**
+ * Sets values for sidebar selections to solarsystems found in selected galaxy.
+ */
+function populateSolarSystems(galaxyID){
+  // Sets header for sidebar
+  sidebarHeader.innerText = "Solar Systems"
+  // Use galaxy's map to get array of solarsystems
+  const galaxy = data.galaxiesMap.get(galaxyID);
+  const solarSystems = galaxy.solarSystems;
+  const solarSystemButtons = setSelections(solarSystems);
+  // Creates double click event for each planet button added
+  solarSystemButtons.forEach((button) =>{
+    button.addEventListener("dblclick", () => populatePlanets(button.id));
+  });
+  // Setting back button behavior
+  sidebarBack.disabled = false;
+  sidebarBack.addEventListener("click", (event) =>{
+    populateGalaxies();
+  });
+}
+/**
+ * Sets values for sidebar selections to solarsystems found in selected galaxy.
+ */
+function populatePlanets(solarSystemID){
+  // Sets header for sidebar
+  sidebarHeader.innerText = "Planets"
+  // Use solarsystem's map to get array of planets
+  const solarSystems = data.solarSystemsMap.get(solarSystemID);
+  const planets = solarSystems.planets;
+  const planetButtons = setSelections(planets);
+  // Creates double click event for each planet button added
+  planetButtons.forEach((button) =>{
+    button.addEventListener("dblclick", () => populateMoons(button.id));
+  });
+  // Setting back button behavior
+  sidebarBack.disabled = false;
+  sidebarBack.addEventListener("click", () =>{
+    populateSolarSystems(solarSystems.galaxy.id);
+  });
+}
+/**
+ * Sets values for sidebar selections to solarsystems found in selected galaxy.
+ */
+function populateMoons(planetID){
+  // Sets header for sidebar
+  sidebarHeader.innerText = "Moons"
+  // Use planet's map to get array of moons
+  const planet = data.planetsMap.get(planetID);
+  const moons = planet.moons;
+  const moonButtons = setSelections(moons);
+  // Moons have no double click options.
+  // Setting back button behavior
+  sidebarBack.disabled = false;
+  sidebarBack.addEventListener("click", () =>{
+    populatePlanets(planet.solarSystem.id);
+  });
+  
+}
+
+
 // Should be called to update information on successful click.
 function updatePlanetUI(name, description, avgTemp, hospitable){
   document.getElementsByClassName('planet-name')[0].textContent = name;
@@ -220,12 +307,12 @@ function updatePlanetUI(name, description, avgTemp, hospitable){
   //document.getElementsByClassName('hospitable')[0].textContent =  hospitable;
 }
 function showPlanetUI(){
-  document.querySelector('.planet-info-outer').style.visibility = 'visible';
+  showData();
   controls.enabled = false;
 }
 
 function hidePlanetUI(){
-  document.querySelector('.planet-info-outer').style.visibility = 'hidden';
+  hideData();
   controls.enabled = true;
 }
 
@@ -286,7 +373,7 @@ window.addEventListener('click', (event) => {
   raycaster.setFromCamera(mouse, camera);
   const activeClickables = getClickable();
   activeClickables.forEach(mesh => mesh.updateMatrixWorld(true));
-  console.log(activeClickables);
+  console.log("Objects clickable", activeClickables);
   
   // Determines what the ray intersects
   const intersects = raycaster.intersectObjects(scene.children, true);
@@ -299,10 +386,11 @@ window.addEventListener('click', (event) => {
     // climb up the tree until we find the parent that IS in your array!
     while (clickedObj && !activeClickables.includes(clickedObj) && clickedObj.parent) {
         clickedObj = clickedObj.parent;
+        //console.log(clickedObj);
     }
 
     // Now that we have the actual registered planet mesh:
-    const planetInfo = clickedObj.userData.planetInfo;
+    const planetInfo = clickedObj.userData.stats;
     if (clickedObj && planetInfo) {
       
       targetPlanet = clickedObj;

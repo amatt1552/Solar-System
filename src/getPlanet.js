@@ -35,6 +35,7 @@ function getPlanet({
   });
   const planet = new THREE.Mesh(geo, planetMat);
   planet.scale.setScalar(size);
+  planet.name = stats.name;
 
   // Saves into userData. since is parent wont need anything else.
   planet.userData = {stats: stats};

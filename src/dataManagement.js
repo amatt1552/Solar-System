@@ -84,11 +84,14 @@ export function deleteSolarSystem(){
 export function deletePlanet(){
 
 }
-var galaxiesMap = new Map();
+export const galaxiesMap = new Map();
+// Used to create id for galaxies
+let galaxyID = 0;
 export class Galaxy
 {
     constructor(name, type, position, solarSystems){
-        this.id = "g" + galaxiesMap.size;
+        this.id = "g" + galaxyID;
+        galaxyID++;
         this.name = name;
         this.type = type;
         this.position = position;
@@ -96,13 +99,16 @@ export class Galaxy
         galaxiesMap.set(this.id, this);
     }
 }
-var solarSystemsMap = new Map();
+
+export const solarSystemsMap = new Map();
+let solarSystemsID = 0;
 export class SolarSystem
 {
     constructor(galaxy, name, position, sun, planets)
     {
         this.galaxy = galaxy;
-        this.id = galaxy.id + "_s" + solarSystemsMap.size;
+        this.id = galaxy.id + "_s" + solarSystemsID;
+        solarSystemsID++;
         this.name = name;
         this.position = position;
         this.sun = sun;
@@ -110,10 +116,12 @@ export class SolarSystem
         solarSystemsMap.set(this.id, this);
     }
 }
-var planetsMap = new Map();
+export const planetsMap = new Map();
+let planetID = 0
 export class Planet{
     constructor(
         solarSystem,
+        name,
         size,
         distance,
         model,
@@ -122,7 +130,9 @@ export class Planet{
         moons
     ){
         this.solarSystem = solarSystem;
-        this.id = solarSystem.id + "_p" + planetsMap.size;
+        this.id = solarSystem.id + "_p" + planetID;
+        this.name = name;
+        planetID++;
         this.size = size;
         this.distance = distance;
         this.model = model;
@@ -153,11 +163,13 @@ export class Ring{
         this.scale = scale;
     }
 }
-var moonsMap = new Map();
+export const moonsMap = new Map();
+let moonsID = 0;
 export class Moon{
     constructor(planet, name, size, distance, model, texture){
         this.planet = planet
-        this.id = planet.id + "_m" + moonsMap.size;
+        this.id = planet.id + "_m" + moonsID;
+        moonsID++;
         this.name = name;
         this.size = size;
         this.distance = distance;

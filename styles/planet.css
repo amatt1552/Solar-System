@@ -64,6 +64,7 @@
     width: 40vw;
     height: 98vh;
     background-color: #5d5d5dab;
+    visibility: hidden;
 }
 .info-inner{
     box-sizing: border-box; /* Make it account for padding with % */

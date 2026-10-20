@@ -12,7 +12,7 @@ import getChild from "./src/getChild.js"
 import * as data from "./src/dataManagement.js"
 
 import {initSideBar, addSelection, setSelections} from "./src/sidebar.js"
-import initDataEntry from "./src/dataEntryWindow.js";
+import {initDataEntry, showDataEntry} from "./src/dataEntryWindow.js";
 import { initDataDisplay, showData, hideData } from "./src/dataDisplayWindow.js";
 
 const w = window.innerWidth;
@@ -99,15 +99,30 @@ async function createGalaxy(){
   galaxies[0].solarSystems = solarSystems;
 
   const sunData = new data.Sun(solarSystems[0], "Sol", 1, 5778);
-  const planets = [new data.Planet(solarSystems[0],"Earth", 0.225, 2, null, "earth.png", null, null)];
+  const planets = [new data.Planet(
+    solarSystems[0], 
+    new data.Stats({name: "Earth", dangerLevel:0}),
+    0.225,
+    2,
+    null,
+    "earth.png",
+    null,
+    null
+  )];
   solarSystems[0].sun = sunData;
   solarSystems[0].planets = planets;
   
-  const moons = [new data.Moon(planets[0], "Moon", 0.1, 0.5, null, "moon.png")];
+  const moons = [new data.Moon(
+    planets[0], 
+    new data.Stats({name: "Moon", dangerLevel:2}),
+    0.1,
+    0.5, 
+    null, 
+    "moon.png"
+  )];
   planets[0].moons = moons;
   
-  populateGalaxies
-();
+  populateGalaxies();
   const newJson = data.createJson(galaxies);
   
 
@@ -132,13 +147,13 @@ async function createGalaxy(){
     let moons = [];
     let ring = null;
     // Creates the moons first if any found
-    planetData.moons.forEach((moonData) => {      
+    planetData.moons.forEach((moonData) => {    
       const moon = getChild({ 
-        stats: new data.Stats(),
+        stats: moonData.stats,
         size: moonData.size, 
         distance: moonData.distance, 
         img: moonData.texture, 
-        name: moonData.name});
+      });
       moons.push(moon);
       
     });
@@ -162,14 +177,14 @@ async function createGalaxy(){
 
     // Creates the planet
     const planet = getPlanet({
-      stats: new data.Stats(),
+      stats: planetData.stats,
       children: moons, 
       ring: ring, 
       size: planetData.size, 
       distance: planetData.distance, 
-      img: planetData.texture, 
-      name: planetData.name })
-    solarSystemGroup.add(planet)
+      img: planetData.texture
+    });
+    solarSystemGroup.add(planet);
   });
   
 
@@ -272,6 +287,7 @@ function populatePlanets(solarSystemID){
   // Creates double click event for each planet button added
   planetButtons.forEach((button) =>{
     button.addEventListener("dblclick", () => populateMoons(button.id));
+    button.addEventListener("click", () => showDataEntry());
   });
   // Setting back button behavior
   sidebarBack.disabled = false;

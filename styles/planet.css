@@ -1,24 +1,4 @@
 
-.input-container-full-width{
-    display: flex;
-    gap: 4px;
-    width: 100%;
-    padding-top: 1rem;
-}
-.flex-input{
-    flex: 1;
-}
-
-.description-height{
-    min-height: 4rem;
-}
-
-.data-edit-cities-list{
-    display: flex;
-    flex-direction: column;
-}
-
-
 .deleted-list-container{
     max-height: 4rem;
     overflow: auto;
@@ -103,7 +83,7 @@
 }
 /*removes the top spacing on an element*/
 .remove-spacing-t{
-    padding-top: 0;
+    padding-top: 0 !important;
     margin-top: 0;
 }
 /*removes the top and bottom spacing on an element*/

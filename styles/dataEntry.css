@@ -1,0 +1,37 @@
+.input-container-full-width{
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    padding-top: 1rem;
+}
+.flex-input{
+    flex: 1;
+}
+
+.description-height{
+    min-height: 4rem;
+}
+
+.added-input{
+    margin-bottom: 4px;
+}
+
+.minus-button{
+    box-sizing: border-box;
+    height: 20px;
+    width: 20px;
+    border: 1px solid gray;
+    cursor: pointer;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.minus-button span {
+    display: block;
+    width: 6px;             /* Visible layout width */
+    height: 2px;            /* Bar thickness */
+    
+    background-color: rgb(219, 219, 219);
+}

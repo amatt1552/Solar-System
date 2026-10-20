@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="styles/sidebar.css"/>
     <!-- Style sheet for hamburger button -->
     <link rel="stylesheet" href="styles/hamburger.css"/>
+    <!-- Style sheet for data entry -->
+    <link rel="stylesheet" href="styles/dataEntry.css"/>
     <title>Solar System - Robot Bobby</title>
     <style>
       @font-face {
@@ -57,6 +59,7 @@
         border-style: solid;
         font-optical-sizing: auto;
         background-color:rgba(99, 99, 99, 0.473);
+        border: 1px solid gray;
         color: white;
       }
 
@@ -68,6 +71,7 @@
         color: white;
         min-height: 2rem;
         resize: none;
+        box-sizing: border-box;
       }
 
       select{
@@ -144,14 +148,28 @@
         <h1 class="data-edit-header center-text">
           Planet Data
         </h1>
+
+        <h2>Model Settings</h2>
+        <div class="input-container-full-width">
+          <span>Model:</span><input class="flex-input data-edit-temperature remove-spacing-t"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Texture:</span><input class="flex-input data-edit-temperature remove-spacing-t"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Size</span><input class="flex-input data-edit-temperature"></input>
+        </div>
+        <div class="input-container-full-width">
+          <span>Distance:</span><input class="flex-input data-edit-temperature remove-spacing-t"></input>
+        </div>
+
+        <h2>Properties:</h2>
         <div class="input-container-full-width remove-spacing-t">
           <span>Name:</span><input class="flex-input data-edit-name"></input>
         </div>
         <p>Description:</p>
         <textarea class="data-edit-description description-height"></textarea>
-
-        <h2>Properties:</h2>
-        <div class="input-container-full-width remove-spacing-t">
+        <div class="input-container-full-width">
           <span>Biomes:</span><input class="flex-input data-edit-biomes"></input>
         </div>
         <div class="input-container-full-width">
@@ -171,23 +189,30 @@
           <select class="flex-input data-edit-composition">
             <option> Safe </option>
             <option> Moderate </option>
-            <option> Deadly </option>
+            <option> Hazardous </option>
+            <option> Unknown </option>
           </select>
         </div>
         <p>Atmosphere Stats:</p>
-        <div class="input-container-full-width remove-spacing-t atmosphere-stat-list">
-          <input class="flex-input data-edit-atmosphere"></input>
+        <div id="data-entry-atmosphere-list">
+          <span class="added-input input-container-full-width remove-spacing-t">
+            <input class="flex-input"></input>
+            <button class="minus-button"><span></span></button>
+          </span>
         </div>
-        <button class="add-atmosphere-stat">+</button>
+        <button id="data-entry-add-atmosphere-stat" class="plus-button">+</button>
 
         <h2>Humanoid Presences:</h2>
         <p class="remove-spacing-t">Summary:</p>
         <textarea class="data-edit-humanoid-summary description-height"></textarea>
         <p>Cities:</p>
-        <div class="data-edit-cities-list">
-          <textarea class="data-edit-city"></textarea>
+        <div id="data-entry-city-list">
+          <span class="added-input input-container-full-width remove-spacing-t">
+            <textarea class="flex-input"></textarea>
+            <button class="minus-button"><span></span></button>
+          </span>
         </div>
-        <button class="add-city">+</button>
+        <button id="data-entry-add-city" class="plus-button">+</button>
         <br>
       </div>
     </div>

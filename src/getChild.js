@@ -31,7 +31,7 @@ function getChild({
   child.scale.setScalar(size);
   child.name = stats.name;
 
-  // Adds variables the parent will need.
+  // Adds stats and variables the parent will need.
   child.userData = {stats: stats, distance: distance, orbitSpeed: orbitSpeed};
   if(useRim){
     const childRimMat = getFresnelMat({ rimHex: 0xffffff, facingHex: 0x000000 });

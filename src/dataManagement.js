@@ -34,7 +34,7 @@ export function createJson(galaxies)
 
             solarSystem.planets.forEach((planet) => {
                 let planetJson = {
-                    "name": planet.name,
+                    "stats": planet.stats,
                     "size": planet.size,
                     "distance": planet.distance,
                     "model": planet.model,
@@ -53,7 +53,7 @@ export function createJson(galaxies)
 
                 planet.moons.forEach((moon) =>{
                     const moonJson = {
-                    "name": moon.name,
+                    "stats": moon.stats,
                     "size": moon.size,
                     "distance": moon.distance,
                     "model": moon.model,
@@ -121,7 +121,7 @@ let planetID = 0
 export class Planet{
     constructor(
         solarSystem,
-        name,
+        stats,
         size,
         distance,
         model,
@@ -131,8 +131,8 @@ export class Planet{
     ){
         this.solarSystem = solarSystem;
         this.id = solarSystem.id + "_p" + planetID;
-        this.name = name;
         planetID++;
+        this.stats = stats;
         this.size = size;
         this.distance = distance;
         this.model = model;
@@ -166,11 +166,11 @@ export class Ring{
 export const moonsMap = new Map();
 let moonsID = 0;
 export class Moon{
-    constructor(planet, name, size, distance, model, texture){
+    constructor(planet, stats, size, distance, model, texture){
         this.planet = planet
         this.id = planet.id + "_m" + moonsID;
         moonsID++;
-        this.name = name;
+        this.stats = stats
         this.size = size;
         this.distance = distance;
         this.model = model;
@@ -192,9 +192,8 @@ export class Stats{
         dangerLevel = 3,
         atmosphere = ["Unknown"],
         presencesSummary = "Unknown",
-        cities = ["Unknown"],
-        moons = []
-} = {}){
+        cities = ["Unknown"]
+    } = {}){
         this.name = name; 
         this.description = description;
         this.biomes = biomes;
@@ -223,6 +222,5 @@ export class Stats{
         this.atmosphere = atmosphere;
         this.presencesSummary = presencesSummary;
         this.cities = cities;
-        this.moons = moons;
     }
 }

@@ -16,7 +16,7 @@ export function initSideBar(){
 */
 export function addSelection(data){
     const button = document.createElement("button");
-    button.textContent = data.name;
+    button.textContent = data.stats? data.stats.name : data.name;
     button.classList.add("galaxy-selection");
     button.id = data.id;
     selectionGroup.appendChild(button);
@@ -30,7 +30,8 @@ export function setSelections(dataList){
     selectionGroup.replaceChildren();
     dataList.forEach((data) =>{
         const button = document.createElement("button");
-        button.textContent = data.name;
+        console.log(data.stats);
+        button.textContent = data.stats? data.stats.name : data.name;
         button.classList.add("galaxy-selection");
         button.id = data.id;
         selectionGroup.appendChild(button);

@@ -18,8 +18,7 @@
     height: 100%;
     border: 0;
     display: grid;
-    align-content: space-between;
-    justify-items: center;
+    gap: 4px
 }
 /* 3. Global properties for the 3 visual bars */
 .hamburger-box span {
@@ -28,9 +27,8 @@
     height: 3px;                 /* Bar thickness */
     background-color: rgb(219, 219, 219);
     border-radius: 4px;
-    transform-origin: center center !important;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-    transform-origin: left center; /* Optimizes smooth transition rotations */
+    transform-origin: center center;
+    transition: transform 0.2s ease, opacity 0.2s ease; 
 }
 
 /* --- ANIMATION TO "X" WHEN ACTIVE --- */
@@ -42,10 +40,10 @@
 
 /* Rotate top bar into a forward slash */
 .hamburger.is-active span:nth-child(1) {
-    transform: translateY(9px) rotate(45deg);
+    transform: translateY(8px) rotate(45deg);
 }
 
 /* Rotate bottom bar into a backslash */
 .hamburger.is-active span:nth-child(3) {
-    transform: translateY(-9px) rotate(-45deg);
+    transform: translateY(-8px) rotate(-45deg);
 }

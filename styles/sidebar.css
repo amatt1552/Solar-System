@@ -50,11 +50,13 @@
     border-left: none;
     border-bottom: none;
 }
+#simple-add-header{
+    font-size: clamp(0.5rem, 2cqi, 2rem);
+}
 .simple-add-menu{
     background-color: rgba(99, 99, 99, 0.473);
     padding: 1px 8px 32px 8px;
     border-top: 1px solid rgba(128, 128, 128, 0.473);
-    visibility: hidden;
 }
 
 #sidebar-hamburger{

@@ -1,9 +1,20 @@
 .input-container-full-width{
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 12px;
     width: 100%;
     padding-top: 1rem;
 }
+.input-container-full-width span{
+    font-size: clamp(0.8rem, 1cqi, 1rem);
+}
+.input-container-full-width input{
+    flex: 1;  /* Tells the input to grow and fill all remaining space */
+    box-sizing: border-box; /* Ensures padding/borders don't cause overflow */
+    font-size: clamp(0.8rem, 1cqi, 1rem);
+    min-width: 1rem;
+}
+
 .flex-input{
     flex: 1;
 }

@@ -122,7 +122,8 @@ async function createGalaxy(){
   )];
   planets[0].moons = moons;
   
-  populateGalaxies();
+  setSidebarGalaxy
+();
   const newJson = data.createJson(galaxies);
   
 
@@ -236,12 +237,22 @@ async function getJson(filepath){
 
 
 // Setting selections to sidebar and back button functionality
-const sidebarBack = document.getElementById("back");
+const sidebarBack = document.getElementById("action-bar-back");
 const sidebarHeader = document.getElementById("sidebar-header");
+const addButton = document.getElementById("action-bar-add");
+// Used to remove listeners to add button.
+let addController;
+let backController;
+let parentID = null;
 /**
  * Sets values for sidebar selections to galaxies
 */
-function populateGalaxies(){
+function setSidebarGalaxy(){
+  parentID = null;
+  //have to reset the listeners at the start. Shouldn't run on initial creation.
+  addController?.abort();
+  addController = new AbortController();
+  
   // Sets header for sidebar
   sidebarHeader.innerText = "Galaxies"
   // Get map from dataManagement
@@ -249,69 +260,150 @@ function populateGalaxies(){
   const galaxyButtons = setSelections(galaxies);
   // Creates double click event for each planet button added
   galaxyButtons.forEach((button) =>{
-    button.addEventListener("dblclick", () => populateSolarSystems(button.id));
+    button.addEventListener("dblclick", () => setSidebarSolarSystems(button.id));
   });
+  // Sets listener for add button on action bar.
+  addButton.addEventListener("click", addSidebarGalaxy, {signal: addController.signal});
   // Setting back button behavior
   sidebarBack.disabled = true;
 }
 /**
+ * Adds galaxy to sidebar on pressing add.
+ */
+function addSidebarGalaxy(){
+  const galaxy = new data.Galaxy("", 0, {x:0,y:0,z:0}, null);
+  const newButton = addSelection(galaxy);
+  newButton.addEventListener("dblclick", () => setSidebarSolarSystems(newButton.id));
+}
+
+
+/**
  * Sets values for sidebar selections to solarsystems found in selected galaxy.
  */
-function populateSolarSystems(galaxyID){
+function setSidebarSolarSystems(galaxyID){
+  // Have to remove listener on add button first so it doesnt add to previous section.
+  addController?.abort();
+  addController = new AbortController();
+
+  //then removes listener on back button.
+  backController?.abort();
+  backController = new AbortController();
+
   // Sets header for sidebar
   sidebarHeader.innerText = "Solar Systems"
   // Use galaxy's map to get array of solarsystems
   const galaxy = data.galaxiesMap.get(galaxyID);
+  console.log("galaxy:", galaxy);
   const solarSystems = galaxy.solarSystems;
   const solarSystemButtons = setSelections(solarSystems);
+  
   // Creates double click event for each planet button added
-  solarSystemButtons.forEach((button) =>{
-    button.addEventListener("dblclick", () => populatePlanets(button.id));
-  });
+  if(solarSystemButtons){
+    solarSystemButtons.forEach((button) =>{
+      button.addEventListener("dblclick", () => setSidebarPlanets(button.id));
+    });
+  }
+  // Sets listener for add button on action bar.
+  addButton.addEventListener("click", () => addSidebarSolarSystem(galaxyID), {signal:addController.signal});
   // Setting back button behavior
   sidebarBack.disabled = false;
-  sidebarBack.addEventListener("click", (event) =>{
-    populateGalaxies();
-  });
+  sidebarBack.addEventListener("click", () => {
+    console.log("back");
+    setSidebarGalaxy();
+  }, {signal:backController.signal});
 }
+/**
+ * Adds solar system to sidebar on pressing add.
+ */
+function addSidebarSolarSystem(galaxyID){
+  const galaxy = data.galaxiesMap.get(galaxyID);
+  const solarSystem = new data.SolarSystem(galaxy, "", 0, {x:0,y:0,z:0}, null, null);
+  const newButton = addSelection(solarSystem);
+  newButton.addEventListener("dblclick", () => setSidebarPlanets(newButton.id));
+}
+
+
 /**
  * Sets values for sidebar selections to solarsystems found in selected galaxy.
  */
-function populatePlanets(solarSystemID){
+function setSidebarPlanets(solarSystemID){
+  // Have to remove listener on add button first so it doesnt add to previous section.
+  addController?.abort();
+  addController = new AbortController();
+  
+  //then removes listener on back button.
+  backController?.abort();
+  backController = new AbortController();
+
   // Sets header for sidebar
   sidebarHeader.innerText = "Planets"
   // Use solarsystem's map to get array of planets
-  const solarSystems = data.solarSystemsMap.get(solarSystemID);
-  const planets = solarSystems.planets;
+  const solarSystem = data.solarSystemsMap.get(solarSystemID);
+  const planets = solarSystem.planets;
   const planetButtons = setSelections(planets);
   // Creates double click event for each planet button added
-  planetButtons.forEach((button) =>{
-    button.addEventListener("dblclick", () => populateMoons(button.id));
-    button.addEventListener("click", () => showDataEntry());
-  });
+  if(planetButtons){
+    planetButtons.forEach((button) =>{
+      button.addEventListener("dblclick", () => setSidebarMoons(button.id));
+      button.addEventListener("click", () => showDataEntry());
+    });
+  }
+
+  // Sets listener for add button on action bar.
+  addButton.addEventListener("click", () => addSidebarPlanet(solarSystemID), {signal:addController.signal});
   // Setting back button behavior
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () =>{
-    populateSolarSystems(solarSystems.galaxy.id);
-  });
+    setSidebarSolarSystems(solarSystem.galaxy.id);
+  },{signal:backController.signal});
 }
+/**
+ * Adds Planet to sidebar on pressing add.
+ */
+function addSidebarPlanet(solarSystemID){
+  const solarSystem = data.solarSystemsMap.get(solarSystemID);
+  const planet = new data.Planet(solarSystem, new data.Stats(), 0, {x:0,y:0,z:0}, null, null);
+  const newButton = addSelection(planet);
+  newButton.addEventListener("dblclick", () => setSidebarMoons(newButton.id));
+}
+
+
 /**
  * Sets values for sidebar selections to solarsystems found in selected galaxy.
  */
-function populateMoons(planetID){
+function setSidebarMoons(planetID){
+  // Have to remove listener on add button first so it doesnt add to previous section.
+  addController?.abort();
+  addController = new AbortController();
+
+  //then removes listener on back button.
+  backController?.abort();
+  backController = new AbortController();
+
   // Sets header for sidebar
   sidebarHeader.innerText = "Moons"
   // Use planet's map to get array of moons
   const planet = data.planetsMap.get(planetID);
   const moons = planet.moons;
   const moonButtons = setSelections(moons);
+
+  // Sets listener for add button on action bar.
+  addButton.addEventListener("click", () => addSidebarMoon(planetID), {signal:addController.signal});
   // Moons have no double click options.
   // Setting back button behavior
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () =>{
-    populatePlanets(planet.solarSystem.id);
-  });
-  
+    setSidebarPlanets(planet.solarSystem.id);
+  }, {signal: backController.signal});
+}
+/**
+ * Adds Moon to sidebar on pressing add.
+ */
+function addSidebarMoon(planetID){
+  const planet = data.planetsMap.get(planetID);
+  const moon = new data.Moon(planet, new data.Stats(), 0, {x:0,y:0,z:0}, null, null);
+  const newButton = addSelection(planet);
+  newButton.addEventListener("dblclick", () => setSidebarPlanets(newButton.id));
 }
 
 

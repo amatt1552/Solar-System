@@ -3,6 +3,7 @@ import { translateShow, translateHide, Direction } from "./transitions.js";
 const sidebarContainer = document.getElementById("sidebar-container")
 const selectionGroup = document.getElementById("sidebar-selection-group");
 const hamburger = document.getElementById("sidebar-hamburger");
+
 let isActive = false;
 const transitionTime = 0.5;
 
@@ -20,17 +21,17 @@ export function addSelection(data){
     button.classList.add("galaxy-selection");
     button.id = data.id;
     selectionGroup.appendChild(button);
-    return Array.from(selectionGroup.children);
+    return button;
 
 }
 
 /** Clears sidebar menu and adds a list of data.*/
 export function setSelections(dataList){
-    
     selectionGroup.replaceChildren();
+    if(!dataList)
+        return null;
     dataList.forEach((data) =>{
         const button = document.createElement("button");
-        console.log(data.stats);
         button.textContent = data.stats? data.stats.name : data.name;
         button.classList.add("galaxy-selection");
         button.id = data.id;

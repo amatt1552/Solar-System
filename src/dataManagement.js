@@ -23,7 +23,7 @@ export function createJson(galaxies)
                 "name": solarSystem.name,
                 "position": solarSystem.position,
                 "sun": null,
-                "planets":[],
+                "planets":[]
             };
             solarSystemJson.sun = {
                 "name": solarSystem.sun.name,
@@ -106,6 +106,12 @@ export class SolarSystem
 {
     constructor(galaxy, name, position, sun, planets)
     {
+        if(galaxy){
+            if(!galaxy.solarSystems){
+                galaxy.solarSystems = [];
+            }
+            galaxy.solarSystems.push(this);
+        }
         this.galaxy = galaxy;
         this.id = galaxy.id + "_s" + solarSystemsID;
         solarSystemsID++;
@@ -129,6 +135,12 @@ export class Planet{
         ring,
         moons
     ){
+        if(solarSystem){
+            if(!solarSystem.planets){
+                solarSystem.planets = [];
+            }
+            solarSystem.planets.push(this);
+        }
         this.solarSystem = solarSystem;
         this.id = solarSystem.id + "_p" + planetID;
         planetID++;
@@ -145,6 +157,11 @@ export class Planet{
 
 export class Sun{
     constructor(solarSystem, name, size, temperature){
+        if(solarSystem){
+            if(!solarSystem.sun){
+                solarSystem.sun = this;
+            }
+        }
         this.solarSystem = solarSystem;
         this.id = solarSystem.id + "_s0";
         this.name = name;
@@ -167,6 +184,12 @@ export const moonsMap = new Map();
 let moonsID = 0;
 export class Moon{
     constructor(planet, stats, size, distance, model, texture){
+        if(planet){
+            if(!planet.moons){
+                planet.moons = [];
+            }
+            planet.moons.push(this);
+        }
         this.planet = planet
         this.id = planet.id + "_m" + moonsID;
         moonsID++;

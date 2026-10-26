@@ -48,7 +48,7 @@ function getSun() {
     sun.add(rimMesh);
 
     const coronaMesh = getCorona();
-    sun.add(coronaMesh);
+    //sun.add(coronaMesh);
 
     const sunLight = new THREE.PointLight(0xffff99, 10);
     sun.add(sunLight);

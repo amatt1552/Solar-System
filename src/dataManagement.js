@@ -213,8 +213,8 @@ export class Stats{
         dayLength = "Unknown",
         composition = "Unknown",
         dangerLevel = 3,
-        atmosphere = ["Unknown"],
-        presencesSummary = "Unknown",
+        atmosphereStats = ["Unknown"],
+        humanoidSummary = "Unknown",
         cities = ["Unknown"]
     } = {}){
         this.name = name; 
@@ -226,24 +226,24 @@ export class Stats{
         this.composition = composition;
         switch(dangerLevel){
             case 0:
-                this.dangerLevel = "safe";
+                this.dangerLevel = "Safe";
                 this.dangerColor = "green";
                 break;
             case 1:
-                this.dangerLevel = "moderate";
+                this.dangerLevel = "Moderate";
                 this.dangerColor = "yellow";
                 break;
             case 2:
-                this.dangerLevel = "hazardous";
+                this.dangerLevel = "Hazardous";
                 this.dangerColor = "red";
                 break;
             default:
-                this.dangerLevel = "unknown";
+                this.dangerLevel = "Unknown";
                 this.dangerColor = "white";
                 break;
         }
-        this.atmosphere = atmosphere;
-        this.presencesSummary = presencesSummary;
+        this.atmosphereStats = atmosphereStats;
+        this.humanoidSummary = humanoidSummary;
         this.cities = cities;
     }
 }

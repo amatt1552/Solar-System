@@ -6,7 +6,7 @@
     left:100%;
     width: 40px;
     height: 40px;
-    padding: 8px;
+    padding: 4px;
     cursor: pointer;
     margin: 0;
     z-index: 999;
@@ -14,16 +14,15 @@
 
 /* Container for the inner elements */
 .hamburger-box {
-    width: 100%;
-    height: 100%;
     border: 0;
     display: grid;
-    gap: 4px
+    gap: 6px;
+    margin: 2px;
 }
 /* 3. Global properties for the 3 visual bars */
 .hamburger-box span {
     display: block;
-    width: 100%;                 /* Visible layout width */
+    width: 25px;                 /* Visible layout width */
     height: 3px;                 /* Bar thickness */
     background-color: rgb(219, 219, 219);
     border-radius: 4px;
@@ -40,10 +39,10 @@
 
 /* Rotate top bar into a forward slash */
 .hamburger.is-active span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
+    transform: translateY(8.5px) rotate(45deg);
 }
 
 /* Rotate bottom bar into a backslash */
 .hamburger.is-active span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+    transform: translateY(-9px) rotate(-45deg);
 }

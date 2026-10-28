@@ -10,6 +10,7 @@ import getElipticLines from "./src/getElipticLines.js";
 import getPlanet from "./src/getPlanet.js"
 import getChild from "./src/getChild.js"
 import * as data from "./src/dataManagement.js"
+import {galaxyStates} from "./src/globalVars.js"
 
 import {initSideBar, addSelection, setSelections} from "./src/sidebar.js"
 import {initDataEntry, showDataEntry} from "./src/dataEntryWindow.js";
@@ -293,6 +294,7 @@ function setSidebarSolarSystems(galaxyID){
   sidebarHeader.innerText = "Solar Systems"
   // Use galaxy's map to get array of solarsystems
   const galaxy = data.galaxiesMap.get(galaxyID);
+  galaxyStates.currentGalaxy = galaxy;
   console.log("galaxy:", galaxy);
   const solarSystems = galaxy.solarSystems;
   const solarSystemButtons = setSelections(solarSystems);
@@ -339,6 +341,7 @@ function setSidebarPlanets(solarSystemID){
   sidebarHeader.innerText = "Planets"
   // Use solarsystem's map to get array of planets
   const solarSystem = data.solarSystemsMap.get(solarSystemID);
+  galaxyStates.currentSolarSystem = solarSystem;
   const planets = solarSystem.planets;
   const planetButtons = setSelections(planets);
   // Creates double click event for each planet button added
@@ -384,6 +387,7 @@ function setSidebarMoons(planetID){
   sidebarHeader.innerText = "Moons"
   // Use planet's map to get array of moons
   const planet = data.planetsMap.get(planetID);
+  galaxyStates.currentPlanet = planet;
   const moons = planet.moons;
   const moonButtons = setSelections(moons);
 

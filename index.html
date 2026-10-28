@@ -141,52 +141,52 @@
       </button>
     </div>
 
-    <!--Menu for editing planet data-->
+    <!--Menu for entering planet data-->
     <div class="info-outer" id="data-entry-outer">
       <div class="info-inner hide-scroll-background"> 
         
-        <h1 class="data-edit-header center-text">
+        <h1 id="data-entry-header" class="center-text">
           Planet Data
         </h1>
 
         <h2>Model Settings</h2>
         <div class="input-container-full-width">
-          <span>Model:</span><input class="flex-input data-edit-temperature remove-spacing-t"></input>
+          <span>Model:</span><input type=file id="data-entry-model" class="flex-input remove-spacing-t"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Texture:</span><input class="flex-input data-edit-temperature remove-spacing-t"></input>
+          <span>Texture:</span><input type=file id="data-entry-texture" class="flex-input remove-spacing-t"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Size</span><input class="flex-input data-edit-temperature"></input>
+          <span>Size</span><input id="data-entry-size" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Distance:</span><input class="flex-input data-edit-temperature remove-spacing-t"></input>
+          <span>Distance:</span><input id="data-entry-distance" class="flex-input remove-spacing-t"></input>
         </div>
 
         <h2>Properties:</h2>
         <div class="input-container-full-width remove-spacing-t">
-          <span>Name:</span><input class="flex-input data-edit-name"></input>
+          <span>Name:</span><input id="data-entry-name" class="flex-input"></input>
         </div>
         <p>Description:</p>
-        <textarea class="data-edit-description description-height"></textarea>
+        <textarea id="data-entry-description" class="data-edit-description description-height"></textarea>
         <div class="input-container-full-width">
-          <span>Biomes:</span><input class="flex-input data-edit-biomes"></input>
+          <span>Biomes:</span><input id="data-entry-biomes" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Average Temperature:</span><input class="flex-input data-edit-temperature"></input>
+          <span>Average Temperature:</span><input id="data-entry-temperature" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Gravity:</span><input class="flex-input data-edit-gravity"></input>
+          <span>Gravity:</span><input id="data-entry-gravity" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Day Length:</span><input class="flex-input data-edit-day-length"></input>
+          <span>Day Length:</span><input id="data-entry-day-length" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Composition:</span><input class="flex-input data-edit-composition"></input>
+          <span>Composition:</span><input id="data-entry-composition" class="flex-input data-edit-composition"></input>
         </div>
         <div class="input-container-full-width">
           <span>Atmosphere:</span>
-          <select class="flex-input data-edit-composition">
+          <select id="data-entry-atmosphere" class="flex-input">
             <option> Safe </option>
             <option> Moderate </option>
             <option> Hazardous </option>
@@ -194,7 +194,7 @@
           </select>
         </div>
         <p>Atmosphere Stats:</p>
-        <div id="data-entry-atmosphere-list">
+        <div id="data-entry-atmosphere-stats">
           <span class="added-input input-container-full-width remove-spacing-t">
             <input class="flex-input"></input>
             <button class="minus-button"><span></span></button>
@@ -204,7 +204,7 @@
 
         <h2>Humanoid Presences:</h2>
         <p class="remove-spacing-t">Summary:</p>
-        <textarea class="data-edit-humanoid-summary description-height"></textarea>
+        <textarea id="data-entry-humanoid-summary" class="description-height"></textarea>
         <p>Cities:</p>
         <div id="data-entry-city-list">
           <span class="added-input input-container-full-width remove-spacing-t">
@@ -213,6 +213,8 @@
           </span>
         </div>
         <button id="data-entry-add-city" class="plus-button">+</button>
+        <br>
+        <button id="save-entry">Save</button>
         <br>
       </div>
     </div>

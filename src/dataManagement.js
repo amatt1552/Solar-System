@@ -15,7 +15,7 @@ export function createJson(galaxies)
                 "y": 0,
                 "z": 0
             },
-            "solar_systems": [],
+            "solar_systems": []
         }
 
         galaxy.solarSystems.forEach((solarSystem) => {

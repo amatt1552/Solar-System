@@ -169,17 +169,40 @@ export class Sun{
         this.temperature = temperature;
     }
 }
-
+/**
+ * Class for creating a ring around a planet. 
+ * @param {Planet} planet - The planet that the ring is around.
+ * @param {number} type - The type of ring. Can be 0 for custom, 1 for model, 2 for asteroids. Does nothing on its own. Must be handled in another script.
+ * @param {Object[]} asteroidFullModels - An array of objects that contain the model and texture for the asteroids in the ring.
+ * @param {Object} fullModel - An object that contains the model and texture for the ring. Only used for type 1.}
+ * @param {Object} dimensions - An object that contains the dimensions of the ring. Only used for type 0. Should contain radius, tube, radial_segments, and tubular_segments.
+ 
+ */
 export class Ring{
-    constructor(planet, type, model, dimensions, scale){
+    constructor({planet = null, type = 0, scale = 1,
+        asteroidFullModels = [{Model:null, texture:null}], 
+        asteroidSizeRange = {min: 1, max: 3}, 
+        asteroidDistanceRange = {min: 1, max: 10},
+        fullModel = {model: null, texture: null},
+        dimensions = {radius: 0.5, tube: 0.05, radial_segments: 8, tubular_segments: 64}
+    }){
+        if(planet){
+            if(!planet.ring){
+                planet.ring = this;
+            }
+        }
         this.planet = planet;
         this.id = planet.id + "_r0";
         this.type = type;
-        this.model = model;
-        this.dimensions = dimensions;
         this.scale = scale;
+        this.asteroidFullModels = asteroidFullModels;
+        this.asteroidSizeRange = asteroidSizeRange;
+        this.asteroidDistanceRange = asteroidDistanceRange;
+        this.model = fullModel;
+        this.dimensions = dimensions;
     }
 }
+
 export const moonsMap = new Map();
 let moonsID = 0;
 export class Moon{

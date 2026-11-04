@@ -9,9 +9,9 @@ import getAsteroidBelt from "./src/getAsteroidBelt.js";
 import getElipticLines from "./src/getElipticLines.js";
 import getPlanet from "./src/getPlanet.js"
 import getChild from "./src/getChild.js"
+
 import * as data from "./src/dataManagement.js"
 import {galaxyStates} from "./src/globalVars.js"
-
 import {initSideBar, addSelection, setSelections} from "./src/sidebar.js"
 import {initDataEntry, showDataEntry} from "./src/dataEntryWindow.js";
 import { initDataDisplay, showData, hideData } from "./src/dataDisplayWindow.js";
@@ -164,7 +164,7 @@ async function createGalaxy(){
     //console.log(planetData.ring, planetData.name);
     if(planetData.ring){
       // This creates the most basic ring.
-      const dimensions = planetData.ring.torus_dimensions;
+      const dimensions = planetData.ring.dimensions;
       const ringGeo = new THREE.TorusGeometry(
         dimensions.radius, 
         dimensions.tube, 
@@ -244,12 +244,10 @@ const addButton = document.getElementById("action-bar-add");
 // Used to remove listeners to add button.
 let addController;
 let backController;
-let parentID = null;
 /**
  * Sets values for sidebar selections to galaxies
 */
 function setSidebarGalaxy(){
-  parentID = null;
   //have to reset the listeners at the start. Shouldn't run on initial creation.
   addController?.abort();
   addController = new AbortController();
@@ -348,7 +346,7 @@ function setSidebarPlanets(solarSystemID){
   if(planetButtons){
     planetButtons.forEach((button) =>{
       button.addEventListener("dblclick", () => setSidebarMoons(button.id));
-      button.addEventListener("click", () => showDataEntry());
+      button.addEventListener("click", () => showDataEntry(button.id));
     });
   }
 

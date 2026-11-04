@@ -85,6 +85,7 @@
       select option{
         background-color:rgba(61, 61, 61, 0.473);
       }
+
     </style>
     <script type="importmap">
       {
@@ -154,13 +155,73 @@
           <span>Model:</span><input type=file id="data-entry-model" class="flex-input remove-spacing-t"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Texture:</span><input type=file id="data-entry-texture" class="flex-input remove-spacing-t"></input>
+          <span>Texture:</span><input type=file id="data-entry-texture" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Size</span><input id="data-entry-size" class="flex-input"></input>
+          <span>Size:</span><input id="data-entry-size" class="flex-input"></input>
         </div>
         <div class="input-container-full-width">
-          <span>Distance:</span><input id="data-entry-distance" class="flex-input remove-spacing-t"></input>
+          <span>Distance:</span><input id="data-entry-distance" class="flex-input"></input>
+        </div>
+
+        <!-- Ring settings -->
+        <div class="checkbox-container">
+          <input type="checkbox" id="data-entry-use-ring"></input>
+          <label for="data-entry-use-ring">Use Ring</label>
+        </div>
+        <div id="data-entry-ring-scale-outer" class="input-container-full-width">
+            <span>Ring Scale:</span><input id="data-entry-ring-scale" class="flex-input"></input>
+        </div>
+        <div id="data-entry-ring-type-outer" class="input-container-full-width">
+          <span>Ring Type:</span>
+          <select id="data-entry-ring-type" class="flex-input">
+            <option> Custom </option>
+            <option> Model </option>
+            <option> Asteroids </option>
+          </select>
+        </div>
+        <!-- Custom ring settings -->
+        <div id="data-entry-ring-custom-outer">
+          <p class="remove-spacing-b">Dimensions:</p>
+          <div class="input-container-full-width">
+            <span>Radius:</span><input id="data-entry-ring-radius" class="flex-input"></input>
+          </div>
+          <div class="input-container-full-width">
+            <span>Tube:</span><input id="data-entry-ring-tube" class="flex-input"></input>
+          </div>
+          <div class="input-container-full-width">
+            <span>Radial Segments:</span><input id="data-entry-ring-radial-segments" class="flex-input"></input>
+          </div>
+          <div class="input-container-full-width">
+            <span>Tubular Segments:</span><input id="data-entry-ring-tubular-segments" class="flex-input"></input>
+          </div>
+        </div>
+        <!-- Model ring settings -->
+        <div id="data-entry-ring-model-outer">
+          <div class="input-container-full-width">
+            <span>Model:</span><input type=file id="data-entry-ring-model" class="flex-input remove-spacing-t"></input>
+          </div>
+          <div class="input-container-full-width">
+            <span>Texture:</span><input type=file id="data-entry-ring-texture" class="flex-input remove-spacing-t"></input>
+          </div>
+        </div>
+        <!-- Asteroid ring settings -->
+        <div id="data-entry-ring-asteroids-outer">
+          <div id="data-entry-asteroid-full-model" class="input-container-full-width">
+            <span>Model:</span><input type=file class="flex-input"></input>
+            <span>Texture:</span><input type=file class="flex-input"></input>
+          </div>
+          <button id="data-entry-add-asteroid" class="plus-button">+</button>
+          <p>Size range:</p>
+          <div class="input-container-full-width">
+            <span>Min:</span><input id="data-entry-asteroid-size-min" class="flex-input"></input>
+            <span>Max:</span><input id="data-entry-asteroid-size-max" class="flex-input"></input>
+          </div>
+          <p>Distance range:</p>
+          <div class="input-container-full-width">
+            <span>Min:</span><input id="data-entry-asteroid-distance-min" class="flex-input"></input>
+            <span>Max:</span><input id="data-entry-asteroid-distance-max" class="flex-input"></input>
+          </div>
         </div>
 
         <h2>Properties:</h2>

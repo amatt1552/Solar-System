@@ -28,7 +28,7 @@ function getPlanet({
   const planetOrbitGroups = [];
   orbitGroup.rotation.x = Math.random() * Math.PI * 2;
 
-  const path = `./textures/${img}`;
+  const path = img;
   const map = texLoader.load(path);
   const planetMat = new THREE.MeshStandardMaterial({
     map,

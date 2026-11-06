@@ -87,83 +87,126 @@ export function deletePlanet(){
 export const galaxiesMap = new Map();
 // Used to create id for galaxies
 let galaxyID = 0;
-export class Galaxy
-{
-    constructor(name, type, position, solarSystems){
+export class Galaxy{
+    constructor(name = "unknown", type = 0, position = {x:0, y:0, z:0}, solarSystems = []){
         this.id = "g" + galaxyID;
         galaxyID++;
         this.name = name;
         this.type = type;
         this.position = position;
         this.solarSystems = solarSystems;
+        
         galaxiesMap.set(this.id, this);
     }
+    
 }
 
 export const solarSystemsMap = new Map();
 let solarSystemsID = 0;
-export class SolarSystem
-{
-    constructor(galaxy, name, position, sun, planets)
+export class SolarSystem{
+    constructor(galaxy, name = "unknown", position = {x:0,y:0,z:0}, sun = null, planets = [])
     {
-        if(galaxy){
-            if(!galaxy.solarSystems){
-                galaxy.solarSystems = [];
-            }
-            galaxy.solarSystems.push(this);
+        if(!galaxy){
+            console.error("Galaxy must be set for solar systems.");
+            return null;
         }
+
+        // I Get id early so can check if it exists already in galaxy's solarsystem.
+        this.id = galaxy.id + "s" + solarSystemsID;
+        if(!galaxy.solarSystems){
+            galaxy.solarSystems = [];
+        }
+
+        // This prevents making another copy of the same solarsystem in the array.
+        // I would use a map to prevent this but arrays tend to work better with UI it seems.
+        const hasSolarSystem = galaxy.solarSystems.some(solarSystem => {solarSystem.id === this.id});
+        if(!hasSolarSystem) galaxy.solarSystems.push(this);
+        
         this.galaxy = galaxy;
-        this.id = galaxy.id + "_s" + solarSystemsID;
         solarSystemsID++;
         this.name = name;
         this.position = position;
         this.sun = sun;
         this.planets = planets;
+        
         solarSystemsMap.set(this.id, this);
     }
 }
+
 export const planetsMap = new Map();
 let planetID = 0
 export class Planet{
     constructor(
         solarSystem,
-        stats,
-        size,
-        distance,
-        model,
-        texture,
-        ring,
-        moons
+        stats = null,
+        size = 1,
+        distance = 1,
+        model = null,
+        texture = null,
+        ring = null,
+        moons = []
     ){
-        if(solarSystem){
-            if(!solarSystem.planets){
-                solarSystem.planets = [];
-            }
-            solarSystem.planets.push(this);
+        if(!solarSystem){
+            console.error("Solar System must be set for planets.");
+            return null;
         }
+
+        if(!solarSystem.planets){
+           solarSystem.planets = [];
+        }
+
+        this.id = solarSystem.id + "p" + planetID;
+        const hasPlanet = solarSystem.planets.some(planet => {planet.id === this.id});
+        if(!hasPlanet) solarSystem.planets.push(this);
+
         this.solarSystem = solarSystem;
-        this.id = solarSystem.id + "_p" + planetID;
         planetID++;
         this.stats = stats;
         this.size = size;
         this.distance = distance;
         this.model = model;
         this.texture = texture;
+        this.modelFile = null;
+        this.textureFile = null;
         this.ring = ring;
         this.moons = moons;
+        this.convertPathToFile();
         planetsMap.set(this.id, this);
+        console.log("planetmap:", planetsMap.entries());
+    }
+
+    async convertPathToFile(){
+        
+        try {
+            // Convert Path to File object
+            if(this.model){
+                const response = await fetch(this.model);
+                const blob = await response.blob();
+                this.modelFile = new File([blob], "earth",{type:blob.type})
+            }
+            if(this.texture){
+                const response = await fetch(this.texture);
+                const blob = await response.blob();
+                this.textureFile = new File([blob], "earth.png",{type:blob.type})
+            }
+            
+            console.log("path successfully converted to File!");
+        } catch (error) {
+            console.error("Failed to convert path to file:", error);
+        }
     }
 }
 
 export class Sun{
-    constructor(solarSystem, name, size, temperature){
-        if(solarSystem){
-            if(!solarSystem.sun){
-                solarSystem.sun = this;
-            }
+    constructor(solarSystem, name = unknown, size = 1, temperature = 1000){
+        if(!solarSystem){
+            console.error("Solar System must be set for sun.");
+            return null;
         }
+
+        solarSystem.sun = this;
         this.solarSystem = solarSystem;
-        this.id = solarSystem.id + "_s0";
+        this.id = solarSystem.id + "s0";
         this.name = name;
         this.size = size;
         this.temperature = temperature;
@@ -179,20 +222,21 @@ export class Sun{
  
  */
 export class Ring{
-    constructor({planet = null, type = 0, scale = 1,
+    constructor({planet, type = 0, scale = 1,
         asteroidFullModels = [{Model:null, texture:null}], 
         asteroidSizeRange = {min: 1, max: 3}, 
         asteroidDistanceRange = {min: 1, max: 10},
         fullModel = {model: null, texture: null},
         dimensions = {radius: 0.5, tube: 0.05, radial_segments: 8, tubular_segments: 64}
     }){
-        if(planet){
-            if(!planet.ring){
-                planet.ring = this;
-            }
+        if(!planet){
+            console.error("Planets must be set for rings.");
+            return null;
         }
+        
+        planet.ring = this;
         this.planet = planet;
-        this.id = planet.id + "_r0";
+        this.id = planet.id + "r0";
         this.type = type;
         this.scale = scale;
         this.asteroidFullModels = asteroidFullModels;
@@ -207,21 +251,52 @@ export const moonsMap = new Map();
 let moonsID = 0;
 export class Moon{
     constructor(planet, stats, size, distance, model, texture){
-        if(planet){
-            if(!planet.moons){
-                planet.moons = [];
-            }
-            planet.moons.push(this);
+        if(!planet){
+            console.error("Planets must be set for moons.");
+            return null;
         }
+
+        if(!planet.moons){
+           planet.moons = [];
+        }
+
+        this.id = planet.id + "m" + moonsID;
+        const hasMoon = planet.moons.some(moon => {moon.id === this.id});
+        if(!hasMoon) planet.moons.push(this);
+
+
         this.planet = planet
-        this.id = planet.id + "_m" + moonsID;
         moonsID++;
         this.stats = stats
         this.size = size;
         this.distance = distance;
         this.model = model;
         this.texture = texture;
+        this.modelFile = null;
+        this.textureFile = null;
         moonsMap.set(this.id, this);
+        this.convertPathToFile();
+    }
+
+    async convertPathToFile(){
+        
+        try {
+            // Convert Path to File object
+            if(this.model){
+                const response = await fetch(this.model);
+                const blob = await response.blob();
+                this.modelFile = new File([blob], "moon",{type:blob.type})
+            }
+            if(this.texture){
+                const response = await fetch(this.texture);
+                const blob = await response.blob();
+                this.textureFile = new File([blob], "moon.png",{type:blob.type})
+            }
+            
+            console.log("path successfully converted to File!");
+        } catch (error) {
+            console.error("Failed to convert path to file:", error);
+        }
     }
 }
 

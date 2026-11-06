@@ -40,7 +40,7 @@ export function setSelections(dataList){
     if(!dataList)
         return null;
     // This is done so that the sidebar can be updated when the data is changed.
-    currentSelections = dataList;
+    currentSelections = structuredClone(dataList);
     dataList.forEach((data) =>{
         const button = document.createElement("button");
         button.textContent = data.stats? data.stats.name : data.name;

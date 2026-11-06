@@ -111,28 +111,29 @@
             Galaxy Name 2
           </button>
         </div>
-        <div class="action-bar-outer">
-          <div class="simple-add-menu">
-            <h2 id="simple-add-header" class="center-text">
-              Create Galaxy
-            </h2>
-            <div class="input-container-full-width remove-spacing-t">
-              <span>Name:</span><input class="flex-input"></input>
-            </div>
-          </div>
-          <div class="action-bar-button-group">
-            <button id="action-bar-back" class="action-bar-button">
-              Back
-            </button>
-            <button id="action-bar-add" class="action-bar-button">
-              Add
-            </button>
-            <button id="action-bar-remove" class="action-bar-button">
-              Remove
-            </button>
+      </div>
+      <!-- Action bar sidebar -->
+      <div class="action-bar-outer">
+        <div class="simple-add-menu">
+          <h1 id="simple-add-header" class="center-text">
+            Create Galaxy
+          </h1>
+          <div class="input-container-full-width remove-spacing-t">
+            <span>Name:</span><input class="flex-input"></input>
           </div>
         </div>
-      </div>
+        <div class="action-bar-button-group">
+          <button id="action-bar-back" class="action-bar-button">
+            Back
+          </button>
+          <button id="action-bar-add" class="action-bar-button">
+            Add
+          </button>
+          <button id="action-bar-remove" class="action-bar-button">
+            Remove
+          </button>
+        </div>
+        </div>
       <button id="sidebar-hamburger" class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
         <div class="hamburger-box">
           <span></span>
@@ -150,7 +151,7 @@
           Planet Data
         </h1>
 
-        <h2>Model Settings</h2>
+        <h2 class="remove-spacing-t">Model Settings</h2>
         <div class="input-container-full-width">
           <span>Model:</span><input type=file id="data-entry-model" class="flex-input remove-spacing-t"></input>
         </div>
@@ -207,9 +208,12 @@
         </div>
         <!-- Asteroid ring settings -->
         <div id="data-entry-ring-asteroids-outer">
-          <div id="data-entry-asteroid-full-model" class="input-container-full-width">
-            <span>Model:</span><input type=file class="flex-input"></input>
-            <span>Texture:</span><input type=file class="flex-input"></input>
+          <p>Asteroid Models</p>
+          <div id="data-entry-asteroid-full-model">
+            <!-- <span class="input-container-full-width"></span>
+              <span>Model:</span><input type=file class="flex-input"></input>
+              <span>Texture:</span><input type=file class="flex-input"></input>
+            </span> -->
           </div>
           <button id="data-entry-add-asteroid" class="plus-button">+</button>
           <p>Size range:</p>
@@ -274,10 +278,23 @@
           </span>
         </div>
         <button id="data-entry-add-city" class="plus-button">+</button>
-        <br>
-        <button id="save-entry">Save</button>
-        <br>
+        
+        
       </div>
+      <!-- Action bar data entry -->
+        <div class="action-bar-outer">
+          <div class="action-bar-button-group">
+            <button id="save-entry" class="action-bar-button">
+              Save
+            </button>
+            <button id="revert-entry" class="action-bar-button">
+              Revert
+            </button>
+            <button id="default-entry" class="action-bar-button">
+              Default
+            </button>
+          </div>
+        </div>
     </div>
 
 

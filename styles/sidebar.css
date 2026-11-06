@@ -12,6 +12,7 @@
     margin: 4px;
     padding-left: 8px;
     padding-right: 8px;
+    padding-bottom: 200px; 
     height: calc(100% - 8px); /* Adjust based on the sum of top and bottom margins */
     background-color: #ffffff00;
     display: flex;
@@ -32,9 +33,10 @@
 
 .action-bar-outer{
     position: absolute;
-    width: 100%;
     bottom: 0px;
     left: 0px;
+    right: 0px;
+    padding: 6px;
 }
 .action-bar-button-group{
     height: 2rem;
@@ -46,12 +48,25 @@
 }
 .action-bar-button{
     flex: 1;
+    background-color: rgb(89, 89, 89);
     border: 1px solid rgba(128, 128, 128, 0.473);
     border-left: none;
     border-bottom: none;
 }
+.action-bar-button:hover
+      {
+        background-color:rgb(107, 107, 107);
+        color: white;
+        cursor: pointer;
+      }
+.action-bar-button:disabled
+      {
+        background-color:rgb(56, 56, 56);
+        color: rgb(160, 160, 160);
+      }
+
 #simple-add-header{
-    font-size: clamp(0.5rem, 2cqi, 2rem);
+    font-size: clamp(0.5rem, 1.8cqi, 1.8rem);
 }
 .simple-add-menu{
     background-color: rgba(99, 99, 99, 0.473);
@@ -64,5 +79,5 @@
     border: 2px solid gray;
 }
 #sidebar-hamburger:hover{
-    background-color:rgba(170, 170, 170, 0.473)
+    background-color:rgba(170, 170, 170, 0.473);
 }

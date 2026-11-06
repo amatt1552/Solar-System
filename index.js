@@ -13,7 +13,7 @@ import getChild from "./src/getChild.js"
 import * as data from "./src/dataManagement.js"
 import {galaxyStates} from "./src/globalVars.js"
 import {initSideBar, addSelection, setSelections} from "./src/sidebar.js"
-import {initDataEntry, showDataEntry} from "./src/dataEntryWindow.js";
+import {initDataEntry, showDataEntry, hideDataEntry} from "./src/dataEntryWindow.js";
 import { initDataDisplay, showData, hideData } from "./src/dataDisplayWindow.js";
 
 const w = window.innerWidth;
@@ -95,7 +95,7 @@ objs.forEach((name) => {
 async function createGalaxy(){
   //galaxy has to be created in this order: galaxy, solarsystem, planets, planet's children.
   const galaxies = [new data.Galaxy("Milky Way", 0, {x:0,y:0,z:0}, null)];
-  
+
   const solarSystems = [new data.SolarSystem(galaxies[0], "Sol System", {x:0,y:0,z:0}, null, null)];
   galaxies[0].solarSystems = solarSystems;
 
@@ -106,7 +106,7 @@ async function createGalaxy(){
     0.225,
     2,
     null,
-    "earth.png",
+    "./textures/earth.png",
     null,
     null
   )];
@@ -119,12 +119,11 @@ async function createGalaxy(){
     0.1,
     0.5, 
     null, 
-    "moon.png"
+    "./textures/moon.png"
   )];
   planets[0].moons = moons;
   
-  setSidebarGalaxy
-();
+  setSidebarGalaxy();
   const newJson = data.createJson(galaxies);
   
 
@@ -255,7 +254,9 @@ function setSidebarGalaxy(){
   // Sets header for sidebar
   sidebarHeader.innerText = "Galaxies"
   // Get map from dataManagement
-  const galaxies = data.galaxiesMap;
+  const galaxies = Array.from(data.galaxiesMap.values());
+  console.log("galaxyMap", data.galaxiesMap)
+  console.log("galaxy to array", galaxies);
   const galaxyButtons = setSelections(galaxies);
   // Creates double click event for each planet button added
   galaxyButtons.forEach((button) =>{
@@ -270,7 +271,7 @@ function setSidebarGalaxy(){
  * Adds galaxy to sidebar on pressing add.
  */
 function addSidebarGalaxy(){
-  const galaxy = new data.Galaxy("", 0, {x:0,y:0,z:0}, null);
+  const galaxy = new data.Galaxy("", 0, {x:0,y:0,z:0}, []);
   const newButton = addSelection(galaxy);
   newButton.addEventListener("dblclick", () => setSidebarSolarSystems(newButton.id));
 }
@@ -293,14 +294,15 @@ function setSidebarSolarSystems(galaxyID){
   // Use galaxy's map to get array of solarsystems
   const galaxy = data.galaxiesMap.get(galaxyID);
   galaxyStates.currentGalaxy = galaxy;
-  console.log("galaxy:", galaxy);
   const solarSystems = galaxy.solarSystems;
   const solarSystemButtons = setSelections(solarSystems);
   
   // Creates double click event for each planet button added
   if(solarSystemButtons){
     solarSystemButtons.forEach((button) =>{
-      button.addEventListener("dblclick", () => setSidebarPlanets(button.id));
+      button.addEventListener("dblclick", () => {
+        setSidebarPlanets(button.id);
+      });
     });
   }
   // Sets listener for add button on action bar.
@@ -308,7 +310,6 @@ function setSidebarSolarSystems(galaxyID){
   // Setting back button behavior
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () => {
-    console.log("back");
     setSidebarGalaxy();
   }, {signal:backController.signal});
 }
@@ -345,7 +346,10 @@ function setSidebarPlanets(solarSystemID){
   // Creates double click event for each planet button added
   if(planetButtons){
     planetButtons.forEach((button) =>{
-      button.addEventListener("dblclick", () => setSidebarMoons(button.id));
+      button.addEventListener("dblclick", () => {
+        setSidebarMoons(button.id);
+        hideDataEntry();
+      });
       button.addEventListener("click", () => showDataEntry(button.id));
     });
   }
@@ -356,15 +360,18 @@ function setSidebarPlanets(solarSystemID){
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () =>{
     setSidebarSolarSystems(solarSystem.galaxy.id);
+    hideDataEntry();
   },{signal:backController.signal});
 }
+
 /**
  * Adds Planet to sidebar on pressing add.
  */
 function addSidebarPlanet(solarSystemID){
   const solarSystem = data.solarSystemsMap.get(solarSystemID);
-  const planet = new data.Planet(solarSystem, new data.Stats(), 0, {x:0,y:0,z:0}, null, null);
+  const planet = new data.Planet(solarSystem, new data.Stats(), 1, 1, null, null);
   const newButton = addSelection(planet);
+  newButton.addEventListener("click", () => showDataEntry(newButton.id));
   newButton.addEventListener("dblclick", () => setSidebarMoons(newButton.id));
 }
 
@@ -388,7 +395,14 @@ function setSidebarMoons(planetID){
   galaxyStates.currentPlanet = planet;
   const moons = planet.moons;
   const moonButtons = setSelections(moons);
+  if(moonButtons){
+    moonButtons.forEach((button) =>{
+      button.addEventListener("click", () => {
+        showDataEntry(button.id);
+      });
+    });
 
+  }
   // Sets listener for add button on action bar.
   addButton.addEventListener("click", () => addSidebarMoon(planetID), {signal:addController.signal});
   // Moons have no double click options.
@@ -396,6 +410,7 @@ function setSidebarMoons(planetID){
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () =>{
     setSidebarPlanets(planet.solarSystem.id);
+    hideDataEntry();
   }, {signal: backController.signal});
 }
 /**
@@ -403,9 +418,10 @@ function setSidebarMoons(planetID){
  */
 function addSidebarMoon(planetID){
   const planet = data.planetsMap.get(planetID);
-  const moon = new data.Moon(planet, new data.Stats(), 0, {x:0,y:0,z:0}, null, null);
-  const newButton = addSelection(planet);
-  newButton.addEventListener("dblclick", () => setSidebarPlanets(newButton.id));
+  const moon = new data.Moon(planet, new data.Stats(), 1, 1, null, null);
+  const newButton = addSelection(moon);
+  newButton.addEventListener("click", () => showDataEntry(newButton.id));
+  console.log("Moons", planet.moons);
 }
 
 

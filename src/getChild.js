@@ -22,8 +22,7 @@ function getChild({
   } else {
     geo = new THREE.IcosahedronGeometry(1, 6)
   }
-  const path = `./textures/${img}`;
-  const map = texLoader.load(path);
+  const path = img;  const map = texLoader.load(path);
   const childMat = new THREE.MeshStandardMaterial({
     map,
   });

@@ -38,7 +38,7 @@
 }
 
 .info-outer{
-    position: fixed;
+    position: absolute;
     top: 0px;
     right: 0px;
     width: 40vw;
@@ -47,11 +47,13 @@
     visibility: hidden;
 }
 .info-inner{
+    position: relative;
     box-sizing: border-box; /* Make it account for padding with % */
     margin: 4px;
     padding-left: 8px;
     padding-right: 8px;
-    height: calc(100% - 8px); /* Adjust based on your total margins */
+    padding-bottom: 50px; 
+    height: calc(100% - 8px); /* Adjust based on the sum of top and bottom margins */
     background-color: #ffffff00;
     display: flex;
     flex-direction: column;

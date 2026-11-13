@@ -3,3 +3,4 @@ export var galaxyStates = {
     currentSolarSystem: null,
     currentPlanet: null
 }
+export const transitionTime = 0.5;

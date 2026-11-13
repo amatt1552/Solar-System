@@ -52,6 +52,7 @@
     border: 1px solid rgba(128, 128, 128, 0.473);
     border-left: none;
     border-bottom: none;
+    z-index: 9999;
 }
 .action-bar-button:hover
       {
@@ -65,13 +66,34 @@
         color: rgb(160, 160, 160);
       }
 
+/* For menu that shows up when add is pressed.*/
 #simple-add-header{
     font-size: clamp(0.5rem, 1.8cqi, 1.8rem);
 }
-.simple-add-menu{
+#simple-add-menu{
     background-color: rgba(99, 99, 99, 0.473);
-    padding: 1px 8px 32px 8px;
+    padding: 1px 8px 16px 8px;
     border-top: 1px solid rgba(128, 128, 128, 0.473);
+}
+#simple-button-group{
+    padding-top: 16px;
+    height: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+.simple-button{
+    flex: 1;
+    background-color: rgb(89, 89, 89);
+    border: 1px solid rgba(128, 128, 128, 0.473);
+}
+.simple-button:hover{
+    background-color:rgb(107, 107, 107);
+    color: white;
+    cursor: pointer;
+}
+.simple-button:disabled{
+    background-color:rgb(56, 56, 56);
+    color: rgb(160, 160, 160);
 }
 
 #sidebar-hamburger{

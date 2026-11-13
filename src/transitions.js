@@ -22,10 +22,10 @@ export function translateHide(element, totalTime, direction = Direction.RIGHT, a
         element.style.transform = `translateX(+${amount}%)`;
         break; 
     case Direction.UP:
-        element.style.transform = `translateY(+${amount}%)`;
+        element.style.transform = `translateY(-${amount}%)`;
         break; 
     case Direction.DOWN:
-        element.style.transform = `translateY(-${amount}%)`;
+        element.style.transform = `translateY(+${amount}%)`;
         break; 
     }
     translateShow

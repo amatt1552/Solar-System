@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="styles/hamburger.css"/>
     <!-- Style sheet for data entry -->
     <link rel="stylesheet" href="styles/dataEntry.css"/>
-    <title>Solar System - Robot Bobby</title>
+    <!-- Style sheet for data entry -->
+    <link rel="stylesheet" href="styles/defaults.css"/>
+    <title>Solar System - Joshua Matthews</title>
     <style>
       @font-face {
         font-family: "earthorbiter";
@@ -23,68 +25,7 @@
         font-style: normal;
       }
 
-      h1 {
-        font-family: "earthorbiter", "Exo 2", sans-serif;
-      }
-      body {
-        margin: 0;
-        color: rgb(219, 219, 219);
-        font-family: "Exo 2", sans-serif;
-        font-optical-sizing: auto;
-        background-color: black;
-      }
-
-      button{
-        
-        font-family: "Exo 2", sans-serif;
-        border: none;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        color: white;
-      }
-      button:hover
-      {
-        background-color:rgba(128, 128, 128, 0.473);
-        color: white;
-        cursor: pointer;
-      }
-      button:disabled
-      {
-        background-color:rgba(56, 56, 56, 0.473);
-        color: rgb(160, 160, 160);
-      }
-
-      input{
-        font-family: "Exo 2", sans-serif;
-        border-style: solid;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        border: 1px solid gray;
-        color: white;
-      }
-
-      textarea{
-        font-family: "Exo 2", sans-serif;
-        border-style: solid;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        color: white;
-        min-height: 2rem;
-        resize: none;
-        box-sizing: border-box;
-      }
-
-      select{
-        font-family: "Exo 2", sans-serif;
-        border-style: solid;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        color: white;
-      }
-
-      select option{
-        background-color:rgba(61, 61, 61, 0.473);
-      }
+      
 
     </style>
     <script type="importmap">
@@ -114,12 +55,20 @@
       </div>
       <!-- Action bar sidebar -->
       <div class="action-bar-outer">
-        <div class="simple-add-menu">
+        <div id="simple-add-menu">
           <h1 id="simple-add-header" class="center-text">
             Create Galaxy
           </h1>
           <div class="input-container-full-width remove-spacing-t">
-            <span>Name:</span><input class="flex-input"></input>
+            <span>Name:</span><input id="simple-add-input" class="flex-input"></input>
+          </div>
+          <div id="simple-button-group">
+            <button id="simple-confirm" class="simple-button">
+              Confirm
+            </button>
+            <button id="simple-cancel" class="simple-button">
+              Cancel
+            </button>
           </div>
         </div>
         <div class="action-bar-button-group">

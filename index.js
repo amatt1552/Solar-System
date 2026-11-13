@@ -11,9 +11,10 @@ import getPlanet from "./src/getPlanet.js"
 import getChild from "./src/getChild.js"
 
 import * as data from "./src/dataManagement.js"
-import {galaxyStates} from "./src/globalVars.js"
-import {initSideBar, addSelection, setSelections} from "./src/sidebar.js"
-import {initDataEntry, showDataEntry, hideDataEntry} from "./src/dataEntryWindow.js";
+import { galaxyStates} from "./src/globalVars.js"
+import { initSideBar, addSelection, setSelections, setCurrentSelection, currentSelection} from "./src/sidebar.js"
+import { initSimpleWindow, hideSimpleWindow, showSimpleWindow } from "./src/simpleAddWindow.js";
+import { initDataEntry, showDataEntry, hideDataEntry} from "./src/dataEntryWindow.js";
 import { initDataDisplay, showData, hideData } from "./src/dataDisplayWindow.js";
 
 const w = window.innerWidth;
@@ -40,6 +41,7 @@ async function initScene(data) {
   const { objs } = data;
   //initialize UI
   initDataEntry();
+  initSimpleWindow();
   initSideBar();
   initDataDisplay();
 
@@ -235,14 +237,24 @@ async function getJson(filepath){
   }
 }
 
+//-------------------- Sidebar Start -----------------------
 
 // Setting selections to sidebar and back button functionality
 const sidebarBack = document.getElementById("action-bar-back");
 const sidebarHeader = document.getElementById("sidebar-header");
 const addButton = document.getElementById("action-bar-add");
-// Used to remove listeners to add button.
+const simpleAddInput = document.getElementById("simple-add-input"); 
+const simpleConfirm = document.getElementById("simple-confirm");
+const simpleCancel = document.getElementById("simple-cancel");
+
+// Used to remove listeners to action bar and simple add buttons.
 let addController;
+let simpleConfirmController;
+let simpleCancelController;
 let backController;
+
+//-------------------- Sidebar Galaxies -----------------------
+
 /**
  * Sets values for sidebar selections to galaxies
 */
@@ -251,31 +263,74 @@ function setSidebarGalaxy(){
   addController?.abort();
   addController = new AbortController();
   
+  // Resets listeners for confirm on the simple add menu.
+  simpleConfirmController?.abort();
+  simpleConfirmController = new AbortController();
+
+  // Resets listeners for cancel on simple add menu.
+  simpleCancelController?.abort();
+  simpleCancelController = new AbortController();
+  
   // Sets header for sidebar
   sidebarHeader.innerText = "Galaxies"
   // Get map from dataManagement
   const galaxies = Array.from(data.galaxiesMap.values());
-  console.log("galaxyMap", data.galaxiesMap)
-  console.log("galaxy to array", galaxies);
+  galaxyStates.currentSolarSystem = null;
+  
   const galaxyButtons = setSelections(galaxies);
   // Creates double click event for each planet button added
   galaxyButtons.forEach((button) =>{
-    button.addEventListener("dblclick", () => setSidebarSolarSystems(button.id));
+    button.addEventListener("click", () => {
+      if(currentSelection && currentSelection.id === button.id){
+        // Makes the double click easier
+        setSidebarSolarSystems(button.id);
+      } else {
+        // Single click actions
+        setCurrentSelection(button.id);
+      }
+
+    });
   });
+  
   // Sets listener for add button on action bar.
-  addButton.addEventListener("click", addSidebarGalaxy, {signal: addController.signal});
+  addButton.addEventListener("click", () => showSimpleWindow("Create Galaxy"), {signal: addController.signal});
+  
+  // Sets listener for pressing enter on simple menu input.
+  simpleAddInput.addEventListener("keypress", (event) => {
+    if(event.key === "Enter"){
+      addSidebarGalaxy(simpleAddInput.value);
+      hideSimpleWindow();
+    }
+  }, {signal: simpleConfirmController.signal});
+  // Sets listener for pressing confirm on simple menu.
+  simpleConfirm.addEventListener("click", () => {
+    addSidebarGalaxy(simpleAddInput.value);
+    hideSimpleWindow();
+  }, {signal: simpleConfirmController.signal});
+  
+  // Sets listener for pressing cancel on simple menu.
+  simpleCancel.addEventListener("click", hideSimpleWindow);
+
   // Setting back button behavior
   sidebarBack.disabled = true;
 }
 /**
  * Adds galaxy to sidebar on pressing add.
  */
-function addSidebarGalaxy(){
-  const galaxy = new data.Galaxy("", 0, {x:0,y:0,z:0}, []);
+function addSidebarGalaxy(name = "Unknown"){
+  const galaxy = new data.Galaxy(name, 0, {x:0,y:0,z:0}, []);
   const newButton = addSelection(galaxy);
-  newButton.addEventListener("dblclick", () => setSidebarSolarSystems(newButton.id));
+  
+  newButton.addEventListener("click", () => {
+    if(currentSelection && currentSelection.id === newButton.id){
+      setSidebarSolarSystems(newButton.id)
+    } else {
+      setCurrentSelection(newButton.id);
+    }
+  });
 }
 
+//-------------------- Sidebar SolarSystems -----------------------
 
 /**
  * Sets values for sidebar selections to solarsystems found in selected galaxy.
@@ -285,28 +340,60 @@ function setSidebarSolarSystems(galaxyID){
   addController?.abort();
   addController = new AbortController();
 
-  //then removes listener on back button.
+  // Removes listener on back button.
   backController?.abort();
   backController = new AbortController();
+
+  // Resets listeners for confirm on the simple add menu.
+  simpleConfirmController?.abort();
+  simpleConfirmController = new AbortController();
+
+  // Resets listeners for cancel on simple add menu.
+  simpleCancelController?.abort();
+  simpleCancelController = new AbortController();
 
   // Sets header for sidebar
   sidebarHeader.innerText = "Solar Systems"
   // Use galaxy's map to get array of solarsystems
   const galaxy = data.galaxiesMap.get(galaxyID);
   galaxyStates.currentGalaxy = galaxy;
+  galaxyStates.currentSolarSystem = null;
+
   const solarSystems = galaxy.solarSystems;
   const solarSystemButtons = setSelections(solarSystems);
   
   // Creates double click event for each planet button added
   if(solarSystemButtons){
     solarSystemButtons.forEach((button) =>{
-      button.addEventListener("dblclick", () => {
-        setSidebarPlanets(button.id);
+      button.addEventListener("click", () => {
+        if(currentSelection && currentSelection.id === button.id){
+          setSidebarPlanets(button.id);
+        } else {
+          setCurrentSelection(button.id);
+        }
       });
     });
   }
+
   // Sets listener for add button on action bar.
-  addButton.addEventListener("click", () => addSidebarSolarSystem(galaxyID), {signal:addController.signal});
+  addButton.addEventListener("click", () => showSimpleWindow("Create Solar System"), {signal: addController.signal});
+  
+  // Sets listener for pressing enter on simple menu input.
+  simpleAddInput.addEventListener("keypress", (event) => {
+    if(event.key === "Enter"){
+      addSidebarSolarSystem(galaxyID, simpleAddInput.value);
+      hideSimpleWindow();
+    }
+  }, {signal: simpleConfirmController.signal});
+  // Sets listener for pressing confirm on simple menu.
+  simpleConfirm.addEventListener("click", () => {
+    addSidebarSolarSystem(galaxyID, simpleAddInput.value);
+    hideSimpleWindow();
+  }, {signal: simpleConfirmController.signal});
+  
+  // Sets listener for pressing cancel on simple menu.
+  simpleCancel.addEventListener("click", hideSimpleWindow);
+  
   // Setting back button behavior
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () => {
@@ -316,13 +403,22 @@ function setSidebarSolarSystems(galaxyID){
 /**
  * Adds solar system to sidebar on pressing add.
  */
-function addSidebarSolarSystem(galaxyID){
+function addSidebarSolarSystem(galaxyID, name){
   const galaxy = data.galaxiesMap.get(galaxyID);
-  const solarSystem = new data.SolarSystem(galaxy, "", 0, {x:0,y:0,z:0}, null, null);
+  const solarSystem = new data.SolarSystem(galaxy, name, 0, {x:0,y:0,z:0}, null, null);
   const newButton = addSelection(solarSystem);
-  newButton.addEventListener("dblclick", () => setSidebarPlanets(newButton.id));
+  
+  newButton.addEventListener("click", () => {
+    if(currentSelection && currentSelection.id === newButton.id){
+      setSidebarPlanets(newButton.id);
+    } else {
+      setCurrentSelection(newButton.id);
+    }
+  });
 }
 
+
+//-------------------- Sidebar Planets -----------------------
 
 /**
  * Sets values for sidebar selections to solarsystems found in selected galaxy.
@@ -336,26 +432,57 @@ function setSidebarPlanets(solarSystemID){
   backController?.abort();
   backController = new AbortController();
 
+  // Resets listeners for confirm on the simple add menu.
+  simpleConfirmController?.abort();
+  simpleConfirmController = new AbortController();
+
+  // Resets listeners for cancel on simple add menu.
+  simpleCancelController?.abort();
+  simpleCancelController = new AbortController();
+
   // Sets header for sidebar
   sidebarHeader.innerText = "Planets"
   // Use solarsystem's map to get array of planets
   const solarSystem = data.solarSystemsMap.get(solarSystemID);
   galaxyStates.currentSolarSystem = solarSystem;
+  galaxyStates.currentPlanet = null;
+  
   const planets = solarSystem.planets;
   const planetButtons = setSelections(planets);
   // Creates double click event for each planet button added
   if(planetButtons){
     planetButtons.forEach((button) =>{
-      button.addEventListener("dblclick", () => {
-        setSidebarMoons(button.id);
-        hideDataEntry();
+      button.addEventListener("click", () => {
+        if(currentSelection && currentSelection.id === button.id){
+          setSidebarMoons(button.id);
+          hideDataEntry();
+        } else {
+          setCurrentSelection(button.id);
+          showDataEntry(button.id)
+        }
       });
-      button.addEventListener("click", () => showDataEntry(button.id));
     });
   }
 
   // Sets listener for add button on action bar.
-  addButton.addEventListener("click", () => addSidebarPlanet(solarSystemID), {signal:addController.signal});
+  addButton.addEventListener("click", () => showSimpleWindow("Create Planet"), {signal: addController.signal});
+  
+  // Sets listener for pressing enter on simple menu input.
+  simpleAddInput.addEventListener("keypress", (event) => {
+    if(event.key === "Enter"){
+      addSidebarPlanet(solarSystemID, simpleAddInput.value);
+      hideSimpleWindow();
+    }
+  }, {signal: simpleConfirmController.signal});
+  // Sets listener for pressing confirm on simple menu.
+  simpleConfirm.addEventListener("click", () => {
+    addSidebarPlanet(solarSystemID, simpleAddInput.value);
+    hideSimpleWindow();
+  }, {signal: simpleConfirmController.signal});
+  
+  // Sets listener for pressing cancel on simple menu.
+  simpleCancel.addEventListener("click", hideSimpleWindow);
+  
   // Setting back button behavior
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () =>{
@@ -367,14 +494,24 @@ function setSidebarPlanets(solarSystemID){
 /**
  * Adds Planet to sidebar on pressing add.
  */
-function addSidebarPlanet(solarSystemID){
+function addSidebarPlanet(solarSystemID, name){
   const solarSystem = data.solarSystemsMap.get(solarSystemID);
-  const planet = new data.Planet(solarSystem, new data.Stats(), 1, 1, null, null);
+  const planet = new data.Planet(solarSystem, new data.Stats({name: name}), 1, 1, null, null);
   const newButton = addSelection(planet);
-  newButton.addEventListener("click", () => showDataEntry(newButton.id));
-  newButton.addEventListener("dblclick", () => setSidebarMoons(newButton.id));
+  
+  newButton.addEventListener("click", () => {
+    if(currentSelection && currentSelection.id === newButton.id){
+      setSidebarMoons(newButton.id);
+      hideDataEntry();
+    } else {
+      setCurrentSelection(newButton.id);
+      showDataEntry(newButton.id);
+    }
+    
+  });
 }
 
+//-------------------- Sidebar Moons -----------------------
 
 /**
  * Sets values for sidebar selections to solarsystems found in selected galaxy.
@@ -384,28 +521,58 @@ function setSidebarMoons(planetID){
   addController?.abort();
   addController = new AbortController();
 
-  //then removes listener on back button.
+  // Resets listener on back button.
   backController?.abort();
   backController = new AbortController();
 
+  // Resets listeners for confirm on the simple add menu.
+  simpleConfirmController?.abort();
+  simpleConfirmController = new AbortController();
+
+  // Resets listeners for cancel on simple add menu.
+  simpleCancelController?.abort();
+  simpleCancelController = new AbortController();
+  
   // Sets header for sidebar
   sidebarHeader.innerText = "Moons"
   // Use planet's map to get array of moons
   const planet = data.planetsMap.get(planetID);
   galaxyStates.currentPlanet = planet;
+
   const moons = planet.moons;
   const moonButtons = setSelections(moons);
+  
+  // Moons have no double click options.
   if(moonButtons){
     moonButtons.forEach((button) =>{
       button.addEventListener("click", () => {
         showDataEntry(button.id);
+        setCurrentSelection(button.id);
       });
     });
 
   }
+  
   // Sets listener for add button on action bar.
-  addButton.addEventListener("click", () => addSidebarMoon(planetID), {signal:addController.signal});
-  // Moons have no double click options.
+  addButton.addEventListener("click", () => showSimpleWindow("Create Moon"), {signal: addController.signal});
+  
+  // Sets listener for pressing enter on simple menu input.
+  simpleAddInput.addEventListener("keypress", (event) => {
+    if(event.key === "Enter"){
+      addSidebarMoon(planetID, simpleAddInput.value);
+      hideSimpleWindow();
+    }
+  }, {signal: simpleConfirmController.signal});
+  
+  // Sets listener for pressing confirm on simple menu.
+  simpleConfirm.addEventListener("click", () => {
+    addSidebarMoon(planetID, simpleAddInput.value);
+    hideSimpleWindow();
+  }, {signal: simpleConfirmController.signal});
+  
+  // Sets listener for pressing cancel on simple menu.
+  simpleCancel.addEventListener("click", hideSimpleWindow);
+  
   // Setting back button behavior
   sidebarBack.disabled = false;
   sidebarBack.addEventListener("click", () =>{
@@ -413,16 +580,22 @@ function setSidebarMoons(planetID){
     hideDataEntry();
   }, {signal: backController.signal});
 }
+
 /**
  * Adds Moon to sidebar on pressing add.
  */
-function addSidebarMoon(planetID){
+function addSidebarMoon(planetID, name){
   const planet = data.planetsMap.get(planetID);
-  const moon = new data.Moon(planet, new data.Stats(), 1, 1, null, null);
+  const moon = new data.Moon(planet, new data.Stats({name: name}), 1, 1, null, null);
   const newButton = addSelection(moon);
-  newButton.addEventListener("click", () => showDataEntry(newButton.id));
-  console.log("Moons", planet.moons);
+  
+  newButton.addEventListener("click", () => {
+    showDataEntry(newButton.id);
+    setCurrentSelection(newButton.id);
+  });
 }
+
+//-------------------- Sidebar End -----------------------
 
 
 // Should be called to update information on successful click.

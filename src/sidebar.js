@@ -4,6 +4,7 @@ const sidebarContainer = document.getElementById("sidebar-container")
 const selectionGroup = document.getElementById("sidebar-selection-group");
 const hamburger = document.getElementById("sidebar-hamburger");
 let currentSelections = [];
+export var currentSelection = null;
 
 let isActive = false;
 const transitionTime = 0.5;
@@ -41,6 +42,7 @@ export function setSelections(dataList){
         return null;
     // This is done so that the sidebar can be updated when the data is changed.
     currentSelections = structuredClone(dataList);
+    currentSelection = null;
     dataList.forEach((data) =>{
         const button = document.createElement("button");
         button.textContent = data.stats? data.stats.name : data.name;
@@ -49,6 +51,20 @@ export function setSelections(dataList){
         selectionGroup.appendChild(button);
     });
     return Array.from(selectionGroup.children);
+}
+
+/** Sets currentSelection and changes visual for selected button. */
+export function setCurrentSelection(id){
+    const selectionArray = Array.from(selectionGroup.children);
+    selectionArray.forEach((button) =>{
+        if(button.id === id){
+            button.classList.add("selected");
+            currentSelection = button;
+        }
+        else{
+            button.classList.remove("selected");
+        }
+    });
 }
 
 // Setups colapsing menu with hamburger button.

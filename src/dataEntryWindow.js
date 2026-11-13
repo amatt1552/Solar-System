@@ -1,6 +1,6 @@
 import {translateHide, translateShow, Direction} from "./transitions.js";
 import {Stats, Planet, Ring, Moon, galaxiesMap, solarSystemsMap, planetsMap, moonsMap } from "./dataManagement.js";
-import {galaxyStates} from "./globalVars.js"
+import {galaxyStates, transitionTime} from "./globalVars.js"
 import {updateSideBar} from "./sidebar.js";
 
 const dataEntryOuter = document.getElementById("data-entry-outer");
@@ -63,7 +63,6 @@ let currentSelectionID;
 let oldSelectionID;
 let isPlanet = true;
 let currentPlanetoid = null;
-const transitionTime = 0.5;
 
 export function initDataEntry(){
     dataEntryOuter.style.visibility = 'hidden';

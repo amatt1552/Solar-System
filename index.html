@@ -14,8 +14,10 @@
     <link rel="stylesheet" href="styles/hamburger.css"/>
     <!-- Style sheet for data entry -->
     <link rel="stylesheet" href="styles/dataEntry.css"/>
-    <!-- Style sheet for data entry -->
+    <!-- Style sheet for default styles -->
     <link rel="stylesheet" href="styles/defaults.css"/>
+    <!-- Style sheet for confirmation popup -->
+    <link rel="stylesheet" href="styles/confirmationPopup.css"/>
     <title>Solar System - Joshua Matthews</title>
     <style>
       @font-face {
@@ -314,17 +316,18 @@
     </div>
 
     <!--Menu for remove confirmation popup-->
-    <div class="overlay">
+    <div id= "confirmation-outer" class="overlay">
       <div class="popup-outer">
         <div class="popup-inner">
           <h2 class="center-text remove-spacing-tb">
             Are you sure?
           </h2>
+          <p class="center-text remove-spacing-b">Removing cannot be undone!</p>
           <p class="remove-spacing-b">
-            Deleted Planetoids:
+            Deleted Elements:
           </p>
           <div class="deleted-list-container hide-scroll-background">
-            <ul class="deleted-list">
+            <ul id="deleted-list">
               <li>Dont hurt me</li>
               <li>Please</li>
               <li>Im Innocent!</li>
@@ -335,9 +338,14 @@
               <li>Im Innocent!</li>
             </ul>
           </div>
-          <button class="remove-confirm">
-            Confirm   
-          </button>
+          <div class="popup-button-group">
+            <button id="popup-button-confirm" class="popup-button">
+              Confirm   
+            </button>
+            <button id="popup-button-cancel" class="popup-button">
+              Cancel   
+            </button>
+          </div>
         </div>
       </div>
     </div>

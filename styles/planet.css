@@ -1,42 +1,7 @@
 
-.deleted-list-container{
-    max-height: 4rem;
-    overflow: auto;
-    margin-bottom: 16px;
-    margin-top: 8px;
+.red-text{
+    color: red;
 }
-/* Dark background overlay */
-.overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
-    z-index: 1000;
-}
-
-/* Center the popup box */
-.popup-outer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #5d5d5dab;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 400px;
-}
-.popup-inner{
-    position: relative;
-    background-color: #ffffff00;
-    display: flex;
-    flex-direction: column;
-    border: 2px solid gray;
-    padding: 20px;
-    margin: 4px;
-}
-
 .info-outer{
     position: absolute;
     top: 0px;

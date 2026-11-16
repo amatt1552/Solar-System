@@ -14,6 +14,7 @@ import * as data from "./src/dataManagement.js"
 import { galaxyStates} from "./src/globalVars.js"
 import { initSideBar, addSelection, setSelections, setCurrentSelection, currentSelection} from "./src/sidebar.js"
 import { initSimpleWindow, hideSimpleWindow, showSimpleWindow } from "./src/simpleAddWindow.js";
+import { showConfirmation, setConfirmListener } from "./src/confirmationWindow.js";
 import { initDataEntry, showDataEntry, hideDataEntry} from "./src/dataEntryWindow.js";
 import { initDataDisplay, showData, hideData } from "./src/dataDisplayWindow.js";
 
@@ -243,15 +244,20 @@ async function getJson(filepath){
 const sidebarBack = document.getElementById("action-bar-back");
 const sidebarHeader = document.getElementById("sidebar-header");
 const addButton = document.getElementById("action-bar-add");
+const removeButton = document.getElementById("action-bar-remove");
 const simpleAddInput = document.getElementById("simple-add-input"); 
 const simpleConfirm = document.getElementById("simple-confirm");
 const simpleCancel = document.getElementById("simple-cancel");
 
 // Used to remove listeners to action bar and simple add buttons.
+// action bar
 let addController;
+let backController;
+let removeController;
+
+// simple window
 let simpleConfirmController;
 let simpleCancelController;
-let backController;
 
 //-------------------- Sidebar Galaxies -----------------------
 
@@ -259,9 +265,14 @@ let backController;
  * Sets values for sidebar selections to galaxies
 */
 function setSidebarGalaxy(){
-  //have to reset the listeners at the start. Shouldn't run on initial creation.
+  // Have to reset the listeners at the start. Shouldn't run on initial creation.
+  // Resets add listener on action bar
   addController?.abort();
   addController = new AbortController();
+
+  // Resets remove listener on action bar
+  removeController?.abort();
+  removeController = new AbortController();
   
   // Resets listeners for confirm on the simple add menu.
   simpleConfirmController?.abort();
@@ -295,6 +306,22 @@ function setSidebarGalaxy(){
   // Sets listener for add button on action bar.
   addButton.addEventListener("click", () => showSimpleWindow("Create Galaxy"), {signal: addController.signal});
   
+  // Sets listener for remove button on action bar.
+  removeButton.addEventListener("click", () => {
+    if(currentSelection){
+      showConfirmation(
+        data.fullTraversal(
+          data.galaxiesMap.get(currentSelection.id)
+        )
+      );
+      // The idea is to have listeners in a separate script so index Doesn't need to know as much.
+      setConfirmListener(() =>{
+        data.deleteGalaxy(currentSelection.id);
+        setSidebarGalaxy();
+      });
+    }
+  }, {signal: removeController.signal});
+
   // Sets listener for pressing enter on simple menu input.
   simpleAddInput.addEventListener("keypress", (event) => {
     if(event.key === "Enter"){
@@ -344,6 +371,10 @@ function setSidebarSolarSystems(galaxyID){
   backController?.abort();
   backController = new AbortController();
 
+  // Resets remove listener on action bar
+  removeController?.abort();
+  removeController = new AbortController();
+
   // Resets listeners for confirm on the simple add menu.
   simpleConfirmController?.abort();
   simpleConfirmController = new AbortController();
@@ -378,6 +409,22 @@ function setSidebarSolarSystems(galaxyID){
   // Sets listener for add button on action bar.
   addButton.addEventListener("click", () => showSimpleWindow("Create Solar System"), {signal: addController.signal});
   
+  // Sets listener for remove button on action bar.
+  removeButton.addEventListener("click", () => {
+    if(currentSelection){
+      showConfirmation(
+        data.fullTraversal(
+          data.solarSystemsMap.get(currentSelection.id)
+        )
+      );
+      // The idea is to have listeners in a separate script so index Doesn't need to know as much.
+      setConfirmListener(() =>{
+        data.deleteSolarSystem(currentSelection.id);
+        setSidebarSolarSystems(galaxyID);
+      });
+    }
+  }, {signal: removeController.signal});
+
   // Sets listener for pressing enter on simple menu input.
   simpleAddInput.addEventListener("keypress", (event) => {
     if(event.key === "Enter"){
@@ -428,6 +475,10 @@ function setSidebarPlanets(solarSystemID){
   addController?.abort();
   addController = new AbortController();
   
+  // Resets remove listener on action bar.
+  removeController?.abort();
+  removeController = new AbortController();
+
   //then removes listener on back button.
   backController?.abort();
   backController = new AbortController();
@@ -466,6 +517,24 @@ function setSidebarPlanets(solarSystemID){
 
   // Sets listener for add button on action bar.
   addButton.addEventListener("click", () => showSimpleWindow("Create Planet"), {signal: addController.signal});
+  
+  // Sets listener for remove button on action bar.
+  removeButton.addEventListener("click", () => {
+    if(currentSelection){
+      showConfirmation(
+        data.fullTraversal(
+          data.planetsMap.get(currentSelection.id)
+        )
+      );
+      // The idea is to have listeners in a separate script so index Doesn't need to know as much.
+      setConfirmListener(() =>{
+        data.deletePlanet(currentSelection.id);
+        setSidebarPlanets(solarSystemID);
+        hideDataEntry();
+      });
+    }
+  }, {signal: removeController.signal});
+
   
   // Sets listener for pressing enter on simple menu input.
   simpleAddInput.addEventListener("keypress", (event) => {
@@ -525,6 +594,10 @@ function setSidebarMoons(planetID){
   backController?.abort();
   backController = new AbortController();
 
+  // Resets remove listener on action bar.
+  removeController?.abort();
+  removeController = new AbortController();
+
   // Resets listeners for confirm on the simple add menu.
   simpleConfirmController?.abort();
   simpleConfirmController = new AbortController();
@@ -556,6 +629,23 @@ function setSidebarMoons(planetID){
   // Sets listener for add button on action bar.
   addButton.addEventListener("click", () => showSimpleWindow("Create Moon"), {signal: addController.signal});
   
+  // Sets listener for remove button on action bar.
+  removeButton.addEventListener("click", () => {
+    if(currentSelection){
+      showConfirmation(
+        data.fullTraversal(
+          data.moonsMap.get(currentSelection.id)
+        )
+      );
+      // The idea is to have listeners in a separate script so index Doesn't need to know as much.
+      setConfirmListener(() =>{
+        data.deleteMoon(currentSelection.id);
+        setSidebarMoons(planetID);
+        hideDataEntry();
+      });
+    }
+  }, {signal: removeController.signal});
+
   // Sets listener for pressing enter on simple menu input.
   simpleAddInput.addEventListener("keypress", (event) => {
     if(event.key === "Enter"){

@@ -1,63 +1,64 @@
 h1 {
-        font-family: "earthorbiter", "Exo 2", sans-serif;
-      }
-      body {
-        margin: 0;
-        color: rgb(219, 219, 219);
-        font-family: "Exo 2", sans-serif;
-        font-optical-sizing: auto;
-        background-color: black;
-      }
+  font-family: "earthorbiter", "Exo 2", sans-serif;
+}
+body {
+  margin: 0;
+  color: rgb(219, 219, 219);
+  font-family: "Exo 2", sans-serif;
+  font-optical-sizing: auto;
+  background-color: black;
+}
 
-      button{
-        
-        font-family: "Exo 2", sans-serif;
-        border: none;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        color: white;
-      }
-      button:hover{
-        background-color:rgba(128, 128, 128, 0.473);
-        color: white;
-        cursor: pointer;
-      }
-      button:disabled{
-        background-color:rgba(56, 56, 56, 0.473);
-        color: rgb(160, 160, 160);
-      }
-      button.selected{
-        background-color:rgba(128, 128, 128, 0.473);
-      }
+button{
+  
+  font-family: "Exo 2", sans-serif;
+  border: none;
+  font-optical-sizing: auto;
+  background-color:rgba(99, 99, 99, 0.473);
+  color: white;
+}
+button:hover{
+  background-color:rgba(128, 128, 128, 0.473);
+  color: white;
+  cursor: pointer;
+}
+button:disabled{
+  background-color:rgba(56, 56, 56, 0.473);
+  color: rgb(160, 160, 160);
+}
+button.selected{
+  background-color:rgba(128, 128, 128, 0.473);
+}
 
-      input{
-        font-family: "Exo 2", sans-serif;
-        border-style: solid;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        border: 1px solid gray;
-        color: white;
-      }
+input{
+  font-family: "Exo 2", sans-serif;
+  border-style: solid;
+  font-optical-sizing: auto;
+  background-color:rgba(99, 99, 99, 0.473);
+  border: 1px solid gray;
+  color: white;
+}
 
-      textarea{
-        font-family: "Exo 2", sans-serif;
-        border-style: solid;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        color: white;
-        min-height: 2rem;
-        resize: none;
-        box-sizing: border-box;
-      }
+textarea{
+  font-family: "Exo 2", sans-serif;
+  border-style: solid;
+  font-optical-sizing: auto;
+  background-color:rgba(99, 99, 99, 0.473);
+  color: white;
+  min-height: 2rem;
+  resize: none;
+  box-sizing: border-box;
+}
 
-      select{
-        font-family: "Exo 2", sans-serif;
-        border-style: solid;
-        font-optical-sizing: auto;
-        background-color:rgba(99, 99, 99, 0.473);
-        color: white;
-      }
+select{
+  font-family: "Exo 2", sans-serif;
+  border-style: solid;
+  font-optical-sizing: auto;
+  background-color:rgba(99, 99, 99, 0.473);
+  color: white;
+}
 
-      select option{
-        background-color:rgba(61, 61, 61, 0.473);
-      }
+select option{
+  background-color:rgba(61, 61, 61, 0.473);
+}
+

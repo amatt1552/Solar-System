@@ -70,28 +70,108 @@ export function createJson(galaxies)
     return JSON.stringify(fullJson);
 }
 export function getGalaxy(galaxyID){
-    localStorage.getItem(galaxyID);
+    //localStorage.getItem(galaxyID);
 }
 
 export function deleteGalaxy(galaxyID){
-    localStorage.removeItem(galaxyID)
+    //localStorage.removeItem(galaxyID)
+    const galaxy = galaxiesMap.get(galaxyID);
+    // Removes all solar systems in map and array connected to this galaxy
+    galaxy.solarSystems?.forEach((solarSystem) =>{
+        deleteSolarSystem(solarSystem.id);
+    });
+    galaxy.solarSystems = null;
+
+    // Removes galaxy from map.
+    galaxiesMap.delete(galaxyID);
 }
 
-export function deleteSolarSystem(){
+export function deleteSolarSystem(solarSystemID){
+    const solarSystem = solarSystemsMap.get(solarSystemID);
+    // Removes all planets in map and array connected to this solar system
+    solarSystem.planets?.forEach((planet) =>{
+        deletePlanet(planet.id);
+    });
+    solarSystem.planets = null;
+    
+    // Removes solarsystem from parent galaxy's array.
+    const galaxy = solarSystem.galaxy;
+    const newSolarSystems = galaxy.solarSystems.filter(solarSystem => solarSystem.id !== solarSystemID);
+    galaxy.solarSystems = newSolarSystems;
 
+    // Remove solar system from map
+    solarSystemsMap.delete(solarSystemID);
 }
 
-export function deletePlanet(){
+export function deletePlanet(planetID){
+    const planet = planetsMap.get(planetID);
+    // Removes all the moons in map and array connected to this planet
+    planet.moons?.forEach((moon) => {
+        moonsMap.delete(moon.id);
+    });
+    planet.moons = null;
 
+    // Removes planet from parent solarSystem's array.
+    const solarSystem = planet.solarSystem;
+    const newPlanets = solarSystem.planets.filter(planet => planet.id !== planetID);
+    solarSystem.planets = newPlanets;
+
+    // Remove Planet from map
+    planetsMap.delete(planetID);
 }
+
+export function deleteMoon(moonID){
+    const moon = moonsMap.get(moonID);
+
+    // Removes moon from parent planet's array
+    const planet = moon.planet;
+    const newMoons = planet.moons.filter(moon => moon.id !== moonID);
+    planet.moons = newMoons;
+
+    // Removes moon from map
+    moonsMap.delete(moonID);
+}
+
+let fullArray = [];
+/**
+ * Takes data and returns an array of the data and its children.
+ * @param {Object} data - galaxy, solarsystem, planet, or moon.
+ */
+export function fullTraversal(data, parent = true){
+    // This is what initializes the array. should only happen once.
+    if(parent){
+        fullArray = [];
+        fullArray.push(data);
+    }
+
+    data.solarSystems?.forEach((solarSystem) =>{
+        fullArray.push(solarSystem);
+        fullTraversal(solarSystem, false);
+    });
+    
+    data.planets?.forEach((planet) =>{
+            fullArray.push(planet);
+            fullTraversal(planet, false);
+    });
+
+    data.moons?.forEach((moon) =>{
+        fullArray.push(moon);
+    });
+    
+    return fullArray;
+}
+
 export const galaxiesMap = new Map();
 // Used to create id for galaxies
 let galaxyID = 0;
 export class Galaxy{
-    constructor(name = "unknown", type = 0, position = {x:0, y:0, z:0}, solarSystems = []){
+    constructor(name = "Unknown", type = 0, position = {x:0, y:0, z:0}, solarSystems = []){
         this.id = "g" + galaxyID;
         galaxyID++;
-        this.name = name;
+        if(name === "")
+            this.name = "Unknown"
+        else
+            this.name = name;
         this.type = type;
         this.position = position;
         this.solarSystems = solarSystems;
@@ -124,7 +204,10 @@ export class SolarSystem{
         
         this.galaxy = galaxy;
         solarSystemsID++;
-        this.name = name;
+         if(name === "")
+            this.name = "Unknown"
+        else
+            this.name = name;
         this.position = position;
         this.sun = sun;
         this.planets = planets;
@@ -172,7 +255,6 @@ export class Planet{
         this.moons = moons;
         this.convertPathToFile();
         planetsMap.set(this.id, this);
-        console.log("planetmap:", planetsMap.entries());
     }
 
     async convertPathToFile(){
@@ -195,6 +277,7 @@ export class Planet{
             console.error("Failed to convert path to file:", error);
         }
     }
+    
 }
 
 export class Sun{
@@ -315,7 +398,10 @@ export class Stats{
         humanoidSummary = "Unknown",
         cities = ["Unknown"]
     } = {}){
-        this.name = name; 
+        if(name === "")
+            this.name = "Unknown"
+        else
+            this.name = name; 
         this.description = description;
         this.biomes = biomes;
         this.averageTemp = averageTemp;

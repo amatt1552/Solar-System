@@ -97,7 +97,7 @@ objs.forEach((name) => {
 
 async function createGalaxy(){
   //galaxy has to be created in this order: galaxy, solarsystem, planets, planet's children.
-  const galaxies = [new data.Galaxy("Milky Way", 0, {x:0,y:0,z:0}, null)];
+  /*const galaxies = [new data.Galaxy("Milky Way", 0, {x:0,y:0,z:0}, null)];
 
   const solarSystems = [new data.SolarSystem(galaxies[0], "Sol System", {x:0,y:0,z:0}, null, null)];
   galaxies[0].solarSystems = solarSystems;
@@ -126,9 +126,11 @@ async function createGalaxy(){
   )];
   planets[0].moons = moons;
   
-  setSidebarGalaxy();
-  const newJson = data.createJson(galaxies);
   
+  const newJson = data.createJson(galaxies);//*/
+  
+  data.getGalaxies();
+  setSidebarGalaxy();
 
   //adds update to userData.
   solarSystemGroup.userData.update = (t) => {
@@ -144,53 +146,54 @@ async function createGalaxy(){
   //const filepath = "./sample-galaxies/sample-galaxy-a.json"
   //const galaxyData = await getJson(filepath);
   //const planetsData = galaxyData.galaxy.solar_systems[0].planets;
-  const galaxyData = JSON.parse(newJson);
-  const planetsData = galaxyData[0].solar_systems[0].planets;
-  // Creates planets based on data from json
-  planetsData.forEach((planetData) => {
-    let moons = [];
-    let ring = null;
-    // Creates the moons first if any found
-    planetData.moons.forEach((moonData) => {    
-      const moon = getChild({ 
-        stats: moonData.stats,
-        size: moonData.size, 
-        distance: moonData.distance, 
-        img: moonData.texture, 
+  if(data.galaxiesMap.size !== 0){
+    const galaxiesData = Array.from(data.galaxiesMap.values());
+    const planetsData = galaxiesData[0].solarSystems[0].planets;
+    // Creates planets based on data from json
+    planetsData.forEach((planetData) => {
+      let moons = [];
+      let ring = null;
+      // Creates the moons first if any found
+      planetData.moons.forEach((moonData) => {    
+        const moon = getChild({ 
+          stats: moonData.stats,
+          size: moonData.size, 
+          distance: moonData.distance, 
+          img: moonData.texture, 
+        });
+        moons.push(moon);
+        
       });
-      moons.push(moon);
-      
-    });
 
-    // Creates planet rings next if any found
-    //console.log(planetData.ring, planetData.name);
-    if(planetData.ring){
-      // This creates the most basic ring.
-      const dimensions = planetData.ring.dimensions;
-      const ringGeo = new THREE.TorusGeometry(
-        dimensions.radius, 
-        dimensions.tube, 
-        dimensions.radial_segments, 
-        dimensions.tubular_segments);
-      const ringMat = new THREE.MeshStandardMaterial();
-      const newRing = new THREE.Mesh(ringGeo, ringMat);
-      newRing.scale.z =  planetData.ring.scale_z;
-      // Add model here later.
-      ring = newRing;
-    }
+      // Creates planet rings next if any found
+      //console.log(planetData.ring, planetData.name);
+      if(planetData.ring){
+        // This creates the most basic ring.
+        const dimensions = planetData.ring.dimensions;
+        const ringGeo = new THREE.TorusGeometry(
+          dimensions.radius, 
+          dimensions.tube, 
+          dimensions.radial_segments, 
+          dimensions.tubular_segments);
+        const ringMat = new THREE.MeshStandardMaterial();
+        const newRing = new THREE.Mesh(ringGeo, ringMat);
+        newRing.scale.z =  planetData.ring.scale_z;
+        // Add model here later.
+        ring = newRing;
+      }
 
-    // Creates the planet
-    const planet = getPlanet({
-      stats: planetData.stats,
-      children: moons, 
-      ring: ring, 
-      size: planetData.size, 
-      distance: planetData.distance, 
-      img: planetData.texture
+      // Creates the planet
+      const planet = getPlanet({
+        stats: planetData.stats,
+        children: moons, 
+        ring: ring, 
+        size: planetData.size, 
+        distance: planetData.distance, 
+        img: planetData.texture
+      });
+      solarSystemGroup.add(planet);
     });
-    solarSystemGroup.add(planet);
-  });
-  
+  }
 
   const asteroidBelt = getAsteroidBelt(objs);
   solarSystemGroup.add(asteroidBelt);
@@ -281,7 +284,7 @@ function setSidebarGalaxy(){
   // Resets listeners for cancel on simple add menu.
   simpleCancelController?.abort();
   simpleCancelController = new AbortController();
-  
+
   // Sets header for sidebar
   sidebarHeader.innerText = "Galaxies"
   // Get map from dataManagement
@@ -317,6 +320,7 @@ function setSidebarGalaxy(){
       // The idea is to have listeners in a separate script so index Doesn't need to know as much.
       setConfirmListener(() =>{
         data.deleteGalaxy(currentSelection.id);
+        data.saveGalaxies();
         setSidebarGalaxy();
       });
     }
@@ -348,13 +352,17 @@ function addSidebarGalaxy(name = "Unknown"){
   const galaxy = new data.Galaxy(name, 0, {x:0,y:0,z:0}, []);
   const newButton = addSelection(galaxy);
   
+  data.saveGalaxies();
+
   newButton.addEventListener("click", () => {
     if(currentSelection && currentSelection.id === newButton.id){
-      setSidebarSolarSystems(newButton.id)
+      //Goes deeper when button is selected
+      setSidebarSolarSystems(newButton.id);
     } else {
       setCurrentSelection(newButton.id);
     }
   });
+
 }
 
 //-------------------- Sidebar SolarSystems -----------------------
@@ -398,6 +406,7 @@ function setSidebarSolarSystems(galaxyID){
     solarSystemButtons.forEach((button) =>{
       button.addEventListener("click", () => {
         if(currentSelection && currentSelection.id === button.id){
+          //Goes deeper when button is selected
           setSidebarPlanets(button.id);
         } else {
           setCurrentSelection(button.id);
@@ -420,6 +429,7 @@ function setSidebarSolarSystems(galaxyID){
       // The idea is to have listeners in a separate script so index Doesn't need to know as much.
       setConfirmListener(() =>{
         data.deleteSolarSystem(currentSelection.id);
+        data.saveGalaxies();
         setSidebarSolarSystems(galaxyID);
       });
     }
@@ -455,8 +465,11 @@ function addSidebarSolarSystem(galaxyID, name){
   const solarSystem = new data.SolarSystem(galaxy, name, 0, {x:0,y:0,z:0}, null, null);
   const newButton = addSelection(solarSystem);
   
+  data.saveGalaxies();
+
   newButton.addEventListener("click", () => {
     if(currentSelection && currentSelection.id === newButton.id){
+      //Goes deeper when button is selected
       setSidebarPlanets(newButton.id);
     } else {
       setCurrentSelection(newButton.id);
@@ -529,6 +542,7 @@ function setSidebarPlanets(solarSystemID){
       // The idea is to have listeners in a separate script so index Doesn't need to know as much.
       setConfirmListener(() =>{
         data.deletePlanet(currentSelection.id);
+        data.saveGalaxies();
         setSidebarPlanets(solarSystemID);
         hideDataEntry();
       });
@@ -567,6 +581,8 @@ function addSidebarPlanet(solarSystemID, name){
   const solarSystem = data.solarSystemsMap.get(solarSystemID);
   const planet = new data.Planet(solarSystem, new data.Stats({name: name}), 1, 1, null, null);
   const newButton = addSelection(planet);
+  
+  data.saveGalaxies()
   
   newButton.addEventListener("click", () => {
     if(currentSelection && currentSelection.id === newButton.id){
@@ -640,6 +656,7 @@ function setSidebarMoons(planetID){
       // The idea is to have listeners in a separate script so index Doesn't need to know as much.
       setConfirmListener(() =>{
         data.deleteMoon(currentSelection.id);
+        data.saveGalaxies();
         setSidebarMoons(planetID);
         hideDataEntry();
       });
@@ -679,6 +696,8 @@ function addSidebarMoon(planetID, name){
   const moon = new data.Moon(planet, new data.Stats({name: name}), 1, 1, null, null);
   const newButton = addSelection(moon);
   
+  data.saveGalaxies();
+
   newButton.addEventListener("click", () => {
     showDataEntry(newButton.id);
     setCurrentSelection(newButton.id);

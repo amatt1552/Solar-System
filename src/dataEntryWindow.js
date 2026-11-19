@@ -1,5 +1,5 @@
 import {translateHide, translateShow, Direction} from "./transitions.js";
-import {Stats, Planet, Ring, Moon, galaxiesMap, solarSystemsMap, planetsMap, moonsMap } from "./dataManagement.js";
+import {Stats, Planet, Ring, Moon, galaxiesMap, solarSystemsMap, planetsMap, moonsMap, saveGalaxies} from "./dataManagement.js";
 import {galaxyStates, transitionTime} from "./globalVars.js"
 import {updateSideBar} from "./sidebar.js";
 
@@ -105,6 +105,8 @@ export function showDataEntry(selectionID){
         clearAddedInputs();
         planetoidToEntries(currentPlanetoid);
     }
+
+    checkUseRing();
     translateShow(dataEntryOuter, transitionTime);
 
 }
@@ -157,15 +159,16 @@ export function planetoidToEntries(planetoid){
         ringTublarSegmentsInput.value = planetoid.ring.tubularSegments;
         
         // Model ring values
-        if(planetoid.ring.model === null){
+        console.log(planetoid.ring);
+        if(planetoid.ring.fullModel.model === null){
             ringModelInput.value = '';
         } else {
-            ringModelInput.files = planetoid.ring.model;
+            ringModelInput.files = planetoid.ring.fullModel.model;
         }
-        if(planetoid.ring.texture === null){
+        if(planetoid.ring.fullModel.texture === null){
             ringTextureInput.value = '';
         } else {
-            ringTextureInput.files = planetoid.ring.texture;
+            ringTextureInput.files = planetoid.ring.fullModel.texture;
         }
 
         // Asteroid ring values
@@ -174,10 +177,10 @@ export function planetoidToEntries(planetoid){
             const asteroidFullModels = [fullModel.model, fullModel.texture];
             addInputs(ringAsteroidModelsInput, asteroidFullModels, labels, false, true);
         });
-        ringAsteroidSizeMinInput.value = planetoid.ring.asteroidSizeMin;
-        ringAsteroidSizeMaxInput.value = planetoid.ring.asteroidSizeMax;
-        ringAsteroidDistanceMinInput.value = planetoid.ring.asteroidDistanceMin;
-        ringAsteroidDistanceMaxInput.value = planetoid.ring.asteroidDistanceMax;
+        ringAsteroidSizeMinInput.value = planetoid.ring.asteroidSizeRange.min;
+        ringAsteroidSizeMaxInput.value = planetoid.ring.asteroidSizeRange.max;
+        ringAsteroidDistanceMinInput.value = planetoid.ring.asteroidDistanceRange.Min;
+        ringAsteroidDistanceMaxInput.value = planetoid.ring.asteroidDistanceRange.Max;
     }
     // Everything for planet stats
     nameInput.value = planetoid.stats.name;
@@ -324,6 +327,7 @@ export function entriesToPlanetoid(){
     currentPlanetoid.texture = textureFile;
 
     updateSideBar();
+    saveGalaxies();
     return currentPlanetoid;
 }
 

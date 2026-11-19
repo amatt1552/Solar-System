@@ -1,12 +1,14 @@
 
-export function createGalaxy(galaxyID, galaxy){
-    localStorage.setItem(galaxyID, galaxy);
-    localStorage.setItem(galaxyCount)
+const storageID = "jish";
+export function saveGalaxies(){
+    const galaxies = Array.from(galaxiesMap.values());
+    const galaxyJsons = createJson(galaxies);
+    localStorage.setItem(storageID, galaxyJsons);
 }
 export function createJson(galaxies)
 {
     const fullJson = [];
-    galaxies.forEach((galaxy)=>{
+    galaxies?.forEach((galaxy)=>{
         let galaxyJson = {
             "name": galaxy.name,
             "type": galaxy.type,
@@ -15,43 +17,30 @@ export function createJson(galaxies)
                 "y": 0,
                 "z": 0
             },
-            "solar_systems": []
+            "solarSystems": []
         }
 
-        galaxy.solarSystems.forEach((solarSystem) => {
+        galaxy.solarSystems?.forEach((solarSystem) => {
             let solarSystemJson = {
                 "name": solarSystem.name,
                 "position": solarSystem.position,
-                "sun": null,
+                "sun": solarSystem.sun,
                 "planets":[]
             };
-            solarSystemJson.sun = {
-                "name": solarSystem.sun.name,
-                "type": solarSystem.sun.type,
-                "size": solarSystem.sun.size,
-                "temperature": solarSystem.sun.temperature
-            }
+                
 
-            solarSystem.planets.forEach((planet) => {
+            solarSystem.planets?.forEach((planet) => {
                 let planetJson = {
                     "stats": planet.stats,
                     "size": planet.size,
                     "distance": planet.distance,
                     "model": planet.model,
                     "texture": planet.texture,
-                    "ring": null,
+                    "ring": planet.ring,
                     "moons": []
                 };
-                if(planetJson.ring){
-                    planetJson.ring = {
-                        "type": planet.ring.type,
-                        "model": planet.ring.model,
-                        "dimensions": planet.ring.dimensions,
-                        "scale": planet.ring.scale
-                    };
-                }
 
-                planet.moons.forEach((moon) =>{
+                planet.moons?.forEach((moon) =>{
                     const moonJson = {
                     "stats": moon.stats,
                     "size": moon.size,
@@ -59,18 +48,107 @@ export function createJson(galaxies)
                     "model": moon.model,
                     "texture": moon.texture
                     };
-                    planetJson.moons.push(moonJson)
+                    planetJson.moons.push(moonJson);
                 });
                 solarSystemJson.planets.push(planetJson);
             });
-            galaxyJson.solar_systems.push(solarSystemJson);
+            galaxyJson.solarSystems.push(solarSystemJson);
         });
-        fullJson.push(galaxyJson)
+        fullJson.push(galaxyJson);
     });
     return JSON.stringify(fullJson);
 }
-export function getGalaxy(galaxyID){
-    //localStorage.getItem(galaxyID);
+
+export function jsonToGalaxies(convertedJson){
+    const galaxiesData = JSON.parse(convertedJson);
+    
+    console.log("parsed json", galaxiesData);
+
+    galaxiesData?.forEach((galaxy) =>{
+        const createdGalaxy = new Galaxy(
+            galaxy.name,
+            galaxy.type,
+            galaxy.position,
+            []
+        );
+        
+        // This array of solarsystems is needed for the created galaxy. the [] needs to be filled. 
+        const createdSolarSystems = [];
+        galaxy.solarSystems.forEach((solarSystem) => {
+            const createdSolarSystem = new SolarSystem(
+                createdGalaxy, 
+                solarSystem.name,
+                solarSystem.position,
+                null,
+                []
+            );
+            
+            const createdPlanets = [];
+            solarSystem.planets.forEach((planet) => {
+                const createdPlanet = new Planet(
+                    createdSolarSystem,
+                    planet.stats,
+                    planet.size,
+                    planet.distance,
+                    planet.model,
+                    planet.texture,
+                    null,
+                    []
+                );
+
+                const createdMoons = [];
+                planet.moons.forEach((moon) =>{
+                    const createdMoon = new Moon(
+                        createdPlanet,
+                        moon.stats,
+                        moon.size,
+                        moon.distance,
+                        moon.model,
+                        moon.texture
+                    );
+                    // Adds to list needed by created planet.
+                    createdMoons.push(createdMoon);
+                });
+
+                // Updates values in planets when forloop for moons is done. 
+                createdPlanet.ring = new Ring({
+                    planet: createdPlanet, 
+                    type: createdPlanet.type, 
+                    scale: createdPlanet.scale,
+                    asteroidFullModels: createdPlanet.asteroidFullModels, 
+                    asteroidSizeRange: createdPlanet.asteroidSizeRange, 
+                    asteroidDistanceRange: createdPlanet.asteroidDistanceRange,
+                    fullModel: createdPlanet.fullModel,
+                    dimensions: createdPlanet.dimensions
+                });
+                createdPlanet.moons = createdMoons;
+                console.log("created mono", createdMoons);
+                // Adds to list needed by created solar system.
+                createdPlanets.push(createdPlanet);
+            });
+            
+            // Updates values in solar system when forloop for planets and moons is done. 
+            createdSolarSystem.sun = new Sun(
+                createdSolarSystem, 
+                solarSystem.sun.name,
+                solarSystem.sun.size,
+                solarSystem.sun.temperature
+            );
+            createdSolarSystem.planets = createdPlanets;
+            // Adds to list needed by created galaxy.
+            createdSolarSystems.push(createdSolarSystem);
+        });
+        // Adds solar systems to galaxy after all for loops besides galaxy are done.
+        createdGalaxy.solarSystems = createdSolarSystems;
+        
+        
+    });
+}
+
+export function getGalaxies(){
+    const galaxyJson = localStorage.getItem(storageID);
+    jsonToGalaxies(galaxyJson);
+
 }
 
 export function deleteGalaxy(galaxyID){
@@ -132,7 +210,7 @@ export function deleteMoon(moonID){
     moonsMap.delete(moonID);
 }
 
-let fullArray = [];
+let fullArray;
 /**
  * Takes data and returns an array of the data and its children.
  * @param {Object} data - galaxy, solarsystem, planet, or moon.
@@ -150,16 +228,18 @@ export function fullTraversal(data, parent = true){
     });
     
     data.planets?.forEach((planet) =>{
-            fullArray.push(planet);
-            fullTraversal(planet, false);
+        fullArray.push(planet);
+        fullTraversal(planet, false);
     });
 
     data.moons?.forEach((moon) =>{
         fullArray.push(moon);
     });
-    
+
     return fullArray;
 }
+
+// ----------------- Classes --------------------
 
 export const galaxiesMap = new Map();
 // Used to create id for galaxies
@@ -281,7 +361,7 @@ export class Planet{
 }
 
 export class Sun{
-    constructor(solarSystem, name = unknown, size = 1, temperature = 1000){
+    constructor(solarSystem, name = "unknown", size = 1, temperature = 1000){
         if(!solarSystem){
             console.error("Solar System must be set for sun.");
             return null;
@@ -293,6 +373,15 @@ export class Sun{
         this.name = name;
         this.size = size;
         this.temperature = temperature;
+    }
+    toJSON() {
+        
+        return {
+            id: this.id,
+            name: this.name,
+            size: this.size,
+            temperature: this.temperature
+        };
     }
 }
 /**
@@ -306,7 +395,7 @@ export class Sun{
  */
 export class Ring{
     constructor({planet, type = 0, scale = 1,
-        asteroidFullModels = [{Model:null, texture:null}], 
+        asteroidFullModels = [{model:null, texture:null}], 
         asteroidSizeRange = {min: 1, max: 3}, 
         asteroidDistanceRange = {min: 1, max: 10},
         fullModel = {model: null, texture: null},
@@ -325,8 +414,21 @@ export class Ring{
         this.asteroidFullModels = asteroidFullModels;
         this.asteroidSizeRange = asteroidSizeRange;
         this.asteroidDistanceRange = asteroidDistanceRange;
-        this.model = fullModel;
+        this.fullModel = fullModel;
         this.dimensions = dimensions;
+    }
+    toJSON() {
+        
+        return {
+            id: this.id,
+            type: this.type,
+            scale: this.scale,
+            asteroidFullModels: this.asteroidFullModels,
+            asteroidSizeRange: this.asteroidSizeRange,
+            asteroidDistanceRange: this.asteroidDistanceRange,
+            model: this.model,
+            dimensions: this.dimensions
+        };
     }
 }
 
